@@ -4,7 +4,7 @@ import { createClient } from "npm:@supabase/supabase-js@2";
 Deno.serve(async (req: Request) => {
   const origin = Deno.env.get("BOOKING_ORIGIN") || "";
   const headers = { "Access-Control-Allow-Origin": origin, "Access-Control-Allow-Headers": "authorization, apikey, content-type, x-client-info", "Access-Control-Allow-Methods": "POST, OPTIONS", "Vary": "Origin" };
-  const reply = (status: number, error?: string) => Response.json(error ? { error } : { ok: true }, { status, headers });
+  const reply = (status: number, error?: string, code?: string) => Response.json(error ? { error, code } : { ok: true }, { status, headers });
   if (!origin || req.headers.get("origin") !== origin) return reply(403, "Origin not allowed");
   if (req.method === "OPTIONS") return new Response(null, { headers });
   if (req.method !== "POST") return reply(405, "Method not allowed");
@@ -46,7 +46,13 @@ Deno.serve(async (req: Request) => {
     }
     const { error } = await db.from("bookings").insert(row);
     if (error && proofPath) await db.storage.from("payment-proofs").remove([proofPath]);
-    if (error) return reply(400, "Could not save booking");
+    if (error) {
+      if (error.message.includes("SLOT_UNAVAILABLE")) return reply(409, "That court slot was just booked. Choose another slot. If you already paid, contact us with your GCash reference before paying again.", "SLOT_UNAVAILABLE");
+      if (error.message.includes("OPENPLAY_FULL")) return reply(409, "Open Play has just filled up. Choose another session. If you already paid, contact us with your GCash reference.", "OPENPLAY_FULL");
+      if (error.message.includes("PRICE_CHANGED")) return reply(409, "Rates have changed. Refresh and review the total before continuing. If already paid, contact us first.", "PRICE_CHANGED");
+      if (error.code === "23505") return reply(409, "This booking reference was already submitted. Contact the team with your reference before retrying or paying again.", "DUPLICATE_REFERENCE");
+      return reply(400, "Booking details could not be accepted. Refresh and check your selection. If already paid, contact us before paying again.", "BOOKING_INVALID");
+    }
     return reply(200);
   } catch {
     return reply(400, "Could not process booking; please try again");

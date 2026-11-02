@@ -89,8 +89,9 @@
           return mod.createClient(cfg.SUPABASE_URL, cfg.SUPABASE_ANON_KEY);
         })
         .catch(function (err) {
-          console.error("Supabase failed to load, falling back to demo mode.", err);
-          return null;
+          console.error("Supabase connection failed.", err);
+          _sbPromise = null;
+          throw new Error("Cannot connect to the booking service. Please try again; no booking has been saved.");
         });
     }
     return _sbPromise;
@@ -216,7 +217,7 @@
         .eq("date", dateStr)
         .neq("status", "cancelled")
         .then(function (res) {
-          if (res.error) { console.error(res.error); return []; }
+          if (res.error) throw new Error("Could not check availability. Please refresh before booking.");
           return res.data || [];
         });
     });
@@ -268,7 +269,12 @@
         notes: booking.notes
       };
       return sb.functions.invoke("create-booking", { body: { booking: row, protection: protection, proof: proof } }).then(function (res) {
-        return { ok: !res.error, error: res.error, booking: booking };
+        if (res.error && res.error.context && typeof res.error.context.json === "function") {
+          return res.error.context.json().then(function (body) {
+            return { ok: false, error: { message: body.error, code: body.code } };
+          }).catch(function () { return { ok: false, error: res.error }; });
+        }
+        return { ok: !res.error && !(res.data && res.data.error), error: res.error || (res.data && res.data.error), booking: booking };
       });
     });
   }

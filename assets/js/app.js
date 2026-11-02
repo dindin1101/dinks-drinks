@@ -15,7 +15,9 @@
     rentPaddle: false,
     paddleQty: 2,
     payment: "gcash",
-    lastBookingText: ""
+    lastBookingText: "",
+    attemptFingerprint: "",
+    attemptRef: ""
   };
 
   /* ---------- toast ---------- */
@@ -123,6 +125,10 @@
       renderSlotGrid();
       renderSessions();
       renderSummary();
+    }).catch(function (err) {
+      $("slotGrid").textContent = "Availability could not load. Please refresh before choosing a slot.";
+      state.selected = {};
+      showError(err.message);
     });
   }
 
@@ -313,6 +319,7 @@
   }
 
   function submitBooking() {
+    if ($("confirmBtn").disabled) return;
     showError("");
     var protection;
     try { protection = window.DND_SECURITY.read(); }
@@ -321,6 +328,7 @@
     var t = computeTotals();
     var name = $("custName").value.trim();
     var mobile = $("custMobile").value.replace(/[\s\-()]/g, "");
+    if (/^639\d{9}$/.test(mobile)) mobile = "+" + mobile;
     var notes = $("custNotes").value.trim();
     var gcashRef = $("gcashRef").value.trim();
     if (state.payment === "gcash" && !$("gcashProof").files[0]) return showError("Please upload your GCash payment receipt.");
@@ -353,12 +361,17 @@
           btn.disabled = false; btn.textContent = "✅ Confirm Booking";
           state.selected = {};
           renderSlotGrid(); renderSummary();
-          return showError("😢 One of your slots was just booked by someone else. Please pick another slot.");
+          return showError("One of your slots was just booked. Choose another slot. If you already paid, contact us with your GCash reference before paying again.");
         }
       }
 
       var slots = selectedSlotsArr();
       var sess = currentSession();
+      if (state.type === "openplay" && state.pax > s.openplay_capacity - openPlayTaken(sess)) {
+        btn.disabled = false; btn.textContent = "✅ Confirm Booking";
+        renderSessions(); renderSummary();
+        return showError("Open Play availability has changed. Reduce players or choose another date. If already paid, contact us before paying again.");
+      }
       var booking = {
         id: D.uid(),
         booking_ref: D.makeRef(),
@@ -383,12 +396,28 @@
         created_at: new Date().toISOString()
       };
 
+      // Keep the same reference for an unchanged retry after a lost response.
+      var fingerprintData = Object.assign({}, booking);
+      delete fingerprintData.id;
+      delete fingerprintData.booking_ref;
+      delete fingerprintData.created_at;
+      var fingerprint = JSON.stringify(fingerprintData);
+      if (state.attemptFingerprint !== fingerprint) {
+        state.attemptFingerprint = fingerprint;
+        state.attemptRef = booking.booking_ref;
+      }
+      booking.booking_ref = state.attemptRef;
+
       return D.createBooking(booking, protection).then(function (res) {
         window.DND_SECURITY.reset();
         btn.disabled = false; btn.textContent = "✅ Confirm Booking";
         if (!res.ok) {
           console.error(res.error);
-          return showError("Something went wrong saving your booking. Please try again or message us on Facebook.");
+          if (res.error && (res.error.code === "SLOT_UNAVAILABLE" || res.error.code === "OPENPLAY_FULL")) {
+            state.selected = {};
+            refreshAvailability();
+          }
+          return showError(res.error && res.error.message || "Could not confirm your booking. Contact us before retrying if you already paid.");
         }
         showSuccess(booking, t);
       });
@@ -495,6 +524,8 @@
         $("successView").hidden = true;
         $("bookingApp").hidden = false;
         state.selected = {};
+        state.attemptFingerprint = "";
+        state.attemptRef = "";
         $("gcashRef").value = "";
         $("gcashProof").value = "";
         $("proofPreview").hidden = true;
