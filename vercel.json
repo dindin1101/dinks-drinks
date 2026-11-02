@@ -2,10 +2,29 @@
   "cleanUrls": true,
   "trailingSlash": false,
   "rewrites": [
-    { "source": "/admin", "destination": "/dinteams/login.html" },
-    { "source": "/dinteams", "destination": "/dinteams/login.html" },
-    { "source": "/dinteams/dashboard", "destination": "/dinteams/dashboard.html" },
-    { "source": "/dinteams/reports", "destination": "/dinteams/reports.html" },
-    { "source": "/dinteams/settings", "destination": "/dinteams/settings.html" }
+    {
+      "source": "/booking",
+      "destination": "/booking.html"
+    },
+    {
+      "source": "/admin",
+      "destination": "/dinteams/login.html"
+    },
+    {
+      "source": "/dinteams",
+      "destination": "/dinteams/login.html"
+    },
+    {
+      "source": "/dinteams/dashboard",
+      "destination": "/dinteams/dashboard.html"
+    },
+    {
+      "source": "/dinteams/reports",
+      "destination": "/dinteams/reports.html"
+    },
+    {
+      "source": "/dinteams/settings",
+      "destination": "/dinteams/settings.html"
+    }
   ]
 }

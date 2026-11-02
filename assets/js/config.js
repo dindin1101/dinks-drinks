@@ -23,5 +23,6 @@
  */
 window.DND_CONFIG = {
   SUPABASE_URL: "https://wryrseqayqvmorgpjqx.supabase.co",
+  RECAPTCHA_SITE_KEY: "", /* Public reCAPTCHA v2 checkbox site key; never the secret. */
   SUPABASE_ANON_KEY: ""   /* <-- PASTE YOUR ANON / PUBLISHABLE KEY HERE */
 };

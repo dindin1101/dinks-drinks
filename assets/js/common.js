@@ -222,10 +222,26 @@
     });
   }
 
-  function createBooking(booking) {
+  function createBooking(booking, protection) {
+    var fileInput = document.getElementById("gcashProof");
+    var file = fileInput && fileInput.files[0];
+    return new Promise(function (resolve, reject) {
+      if (booking.payment_method !== "gcash") return resolve(null);
+      if (!file || file.size > 1048576 || ["image/jpeg", "image/png", "image/webp"].indexOf(file.type) < 0) {
+        return reject(new Error("Upload a JPG, PNG or WebP payment receipt up to 1 MB."));
+      }
+      var reader = new FileReader();
+      reader.onerror = function () { reject(new Error("Could not read receipt. Please select it again.")); };
+      reader.onload = function () { resolve({ type: file.type, data: String(reader.result).split(",")[1] }); };
+      reader.readAsDataURL(file);
+    }).then(function (proof) { return saveBooking(booking, protection, proof); });
+  }
+
+  function saveBooking(booking, protection, proof) {
     return getSupabase().then(function (sb) {
       if (!sb) {
         var list = getDemoBookings();
+        // Demo receipts stay local and are not uploaded or persisted.
         list.push(booking);
         setDemoBookings(list);
         return { ok: true, booking: booking };
@@ -251,7 +267,7 @@
         status: "pending",
         notes: booking.notes
       };
-      return sb.from("bookings").insert(row).then(function (res) {
+      return sb.functions.invoke("create-booking", { body: { booking: row, protection: protection, proof: proof } }).then(function (res) {
         return { ok: !res.error, error: res.error, booking: booking };
       });
     });
