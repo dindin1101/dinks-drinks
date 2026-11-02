@@ -17,19 +17,12 @@
     <p class="login-sub">Pickleball Zone · Team Login</p>
 
     <!-- Real login (Supabase) -->
-    <form id="loginView" hidden>
-      <div class="field">
-        <label for="adminEmail">Email</label>
-        <input type="email" id="adminEmail" placeholder="owner@example.com" autocomplete="username" required>
-      </div>
-      <div class="field">
-        <label for="adminPass">Password</label>
-        <input type="password" id="adminPass" placeholder="••••••••" autocomplete="current-password" required>
-      </div>
-      <p id="loginError" class="form-error" hidden></p>
-      <button type="submit" class="btn btn-lime btn-block btn-lg" id="loginBtn">Log in</button>
-      <p class="hint center" style="margin-top:14px">Forgot your password? Ask the owner to reset it in Supabase → Authentication → Users.</p>
-    </form>
+    <div id="loginView" hidden>
+      <p class="hint">Sign in with your approved team Google account. Other accounts cannot access the dashboard.</p>
+      <p id="loginError" class="form-error" role="alert" hidden></p>
+      <button type="button" class="btn btn-lime btn-block btn-lg" id="loginBtn">Continue with Google</button>
+      <p class="hint center" style="margin-top:14px">No separate website password or SMS code needed.</p>
+    </div>
 
     <!-- Demo PIN (only while Supabase is not connected) -->
     <form id="pinView" hidden>
@@ -48,59 +41,6 @@
 
 <script src="../assets/js/config.js"></script>
 <script src="../assets/js/common.js"></script>
-<script>
-(function () {
-  "use strict";
-  var D = window.DND, $ = function (id) { return document.getElementById(id); };
-  var DEMO_PIN = "1234"; // demo-mode only; real security = Supabase Auth + RLS
-  var NEXT = "dashboard.html";
-
-  function go() { location.replace(NEXT); }
-
-  function init() {
-    if (!D.HAS_SUPABASE) {
-      $("pinView").hidden = false;
-      $("pinView").addEventListener("submit", function (e) {
-        e.preventDefault();
-        if ($("adminPin").value === DEMO_PIN) {
-          sessionStorage.setItem(("dnd_admin_demo_v1"), "1");
-          go();
-        } else {
-          $("pinError").hidden = false;
-          $("pinError").textContent = "Wrong PIN. (Demo PIN: 1234)";
-        }
-      });
-      return;
-    }
-    D.getSupabase().then(function (sb) {
-      if (!sb) { $("pinView").hidden = false; return; }
-      sb.auth.getSession().then(function (res) {
-        if (res && res.data && res.data.session) { go(); return; }
-        $("loginView").hidden = false;
-        $("adminEmail").focus();
-      });
-      $("loginView").addEventListener("submit", function (e) {
-        e.preventDefault();
-        $("loginError").hidden = true;
-        $("loginBtn").disabled = true;
-        $("loginBtn").textContent = "⏳ Signing in…";
-        sb.auth.signInWithPassword({
-          email: $("adminEmail").value.trim(),
-          password: $("adminPass").value
-        }).then(function (res) {
-          $("loginBtn").disabled = false;
-          $("loginBtn").textContent = "Log in";
-          if (res.error) {
-            $("loginError").hidden = false;
-            $("loginError").textContent = "Login failed: " + res.error.message;
-          } else go();
-        });
-      });
-    });
-  }
-
-  document.addEventListener("DOMContentLoaded", init);
-})();
-</script>
+<script src="../assets/js/admin-login.js"></script>
 </body>
 </html>
