@@ -162,6 +162,14 @@
       $("refreshBtn").addEventListener("click", function () {
         load().then(function () { ADMIN.toast("🔄 Bookings refreshed."); });
       });
+      $("retryEmails").addEventListener("click", function () {
+        var btn = this;
+        if (!user.sb) return ADMIN.toast("Email sending is disabled in demo mode.");
+        btn.disabled = true;
+        user.sb.functions.invoke("send-booking-emails").then(function (res) {
+          ADMIN.toast(res.error ? "Could not process queue. Check email setup." : "Queue check finished; this does not guarantee inbox delivery.");
+        }).catch(function () { ADMIN.toast("Could not connect to email service."); }).finally(function () { btn.disabled = false; });
+      });
       load();
     });
   });

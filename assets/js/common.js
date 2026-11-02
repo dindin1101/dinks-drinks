@@ -250,6 +250,7 @@
       var row = {
         booking_ref: booking.booking_ref,
         customer_name: booking.customer_name,
+        customer_email: booking.customer_email,
         mobile: booking.mobile,
         booking_type: booking.booking_type,
         date: booking.date,
@@ -309,7 +310,13 @@
         return { ok: true };
       }
       return sb.from("bookings").update({ status: status }).eq("id", id)
-        .then(function (res) { return { ok: !res.error, error: res.error }; });
+        .then(function (res) {
+          if (res.error) return { ok: false, error: res.error };
+          // Status is already saved. Email failure must not turn this into a failed update.
+          return sb.functions.invoke("send-booking-emails").then(function () {
+            return { ok: true };
+          }).catch(function () { return { ok: true }; });
+        });
     });
   }
 

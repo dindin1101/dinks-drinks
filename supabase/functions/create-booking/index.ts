@@ -1,5 +1,6 @@
 // Deploy with --no-verify-jwt: this is a public endpoint protected by reCAPTCHA.
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { sendBookingEmails } from "../_shared/booking-email.ts";
 
 Deno.serve(async (req: Request) => {
   const origin = Deno.env.get("BOOKING_ORIGIN") || "";
@@ -23,8 +24,10 @@ Deno.serve(async (req: Request) => {
     const result = await verification.json();
     if (!result.success || result.hostname !== hostname) return reply(400, "Spam verification failed; complete the checkbox again");
     if (!b || typeof b.customer_name !== "string" || !b.customer_name.trim() || b.customer_name.length > 120 || !/^(09\d{9}|\+639\d{9})$/.test(b.mobile) || !/^DND-[A-Z0-9]+$/.test(b.booking_ref) || !/^\d{4}-\d{2}-\d{2}$/.test(b.date) || !["court", "openplay"].includes(b.booking_type) || !["gcash", "counter"].includes(b.payment_method) || !Array.isArray(b.slots) || b.slots.length > 100 || (b.notes && (typeof b.notes !== "string" || b.notes.length > 2000))) return reply(400, "Invalid booking details");
+    if (typeof b.customer_email !== "string" || b.customer_email.length > 254 || !/^[A-Za-z0-9._%+!\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}$/.test(b.customer_email)) return reply(400, "Valid booking email required");
+    b.customer_email = b.customer_email.trim().toLowerCase();
     // Explicit allowlist: never accept an incoming status, id or timestamp.
-    const fields = ["booking_ref", "customer_name", "mobile", "booking_type", "date", "court_number", "start_hour", "end_hour", "slots", "pax", "rent_paddle", "paddle_qty", "court_amount", "paddle_amount", "total_amount", "payment_method", "gcash_ref", "notes"];
+    const fields = ["booking_ref", "customer_email", "customer_name", "mobile", "booking_type", "date", "court_number", "start_hour", "end_hour", "slots", "pax", "rent_paddle", "paddle_qty", "court_amount", "paddle_amount", "total_amount", "payment_method", "gcash_ref", "notes"];
     const row: Record<string, unknown> = { status: "pending" };
     for (const field of fields) row[field] = b[field];
     const db = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
@@ -49,10 +52,13 @@ Deno.serve(async (req: Request) => {
     if (error) {
       if (error.message.includes("SLOT_UNAVAILABLE")) return reply(409, "That court slot was just booked. Choose another slot. If you already paid, contact us with your GCash reference before paying again.", "SLOT_UNAVAILABLE");
       if (error.message.includes("OPENPLAY_FULL")) return reply(409, "Open Play has just filled up. Choose another session. If you already paid, contact us with your GCash reference.", "OPENPLAY_FULL");
+      if (error.message.includes("BOOKING_RATE_LIMIT")) return reply(429, "Too many recent bookings for this email or mobile. Please contact the team.", "BOOKING_RATE_LIMIT");
       if (error.message.includes("PRICE_CHANGED")) return reply(409, "Rates have changed. Refresh and review the total before continuing. If already paid, contact us first.", "PRICE_CHANGED");
       if (error.code === "23505") return reply(409, "This booking reference was already submitted. Contact the team with your reference before retrying or paying again.", "DUPLICATE_REFERENCE");
       return reply(400, "Booking details could not be accepted. Refresh and check your selection. If already paid, contact us before paying again.", "BOOKING_INVALID");
     }
+    // Booking committed first; email is best-effort and may be retried from the outbox.
+    EdgeRuntime.waitUntil(sendBookingEmails(db, b.booking_ref).catch(() => {}));
     return reply(200);
   } catch {
     return reply(400, "Could not process booking; please try again");

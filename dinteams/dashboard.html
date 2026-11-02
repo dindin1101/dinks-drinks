@@ -62,6 +62,8 @@
       <button class="btn btn-dark" id="clearFilters" style="flex:0 0 auto">Clear</button>
     </div>
 
+    <button type="button" class="btn btn-dark" id="retryEmails">Retry queued booking emails</button>
+    <p class="hint">Processes up to 5 eligible queued emails. Booking status is saved even if email delivery fails. Failed/uncertain emails need manual review in Supabase.</p>
     <div id="bkList" class="bk-list"></div>
     <p id="bkEmpty" class="hint center" hidden>No bookings match your filters yet.</p>
   </section>

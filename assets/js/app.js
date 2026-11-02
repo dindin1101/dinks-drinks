@@ -329,6 +329,8 @@
     var name = $("custName").value.trim();
     var mobile = $("custMobile").value.replace(/[\s\-()]/g, "");
     if (/^639\d{9}$/.test(mobile)) mobile = "+" + mobile;
+    var email = $("custEmail").value.trim().toLowerCase();
+    if (email.length > 254 || !/^[A-Za-z0-9._%+!\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}$/.test(email)) return showError("Please enter a valid email address for booking updates.");
     var notes = $("custNotes").value.trim();
     var gcashRef = $("gcashRef").value.trim();
     if (state.payment === "gcash" && !$("gcashProof").files[0]) return showError("Please upload your GCash payment receipt.");
@@ -376,6 +378,7 @@
         id: D.uid(),
         booking_ref: D.makeRef(),
         customer_name: name,
+        customer_email: email,
         mobile: mobile,
         booking_type: state.type,
         date: state.date,

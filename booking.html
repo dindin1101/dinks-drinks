@@ -126,6 +126,11 @@
               <label for="custMobile">Mobile number *</label>
               <input type="tel" id="custMobile" placeholder="e.g. 0917 123 4567" autocomplete="tel" inputmode="tel">
             </div>
+            <div class="field">
+              <label for="custEmail">Email address *</label>
+              <input type="email" id="custEmail" maxlength="254" autocomplete="email" placeholder="you@example.com" aria-describedby="emailHint">
+              <p id="emailHint" class="hint">We use this address for booking updates only. Please check it carefully. Email delivery may be delayed; always keep your booking reference.</p>
+            </div>
             <div class="field" id="playersCourtRow">
               <label for="courtPax">Number of players (optional)</label>
               <input type="number" id="courtPax" min="1" max="20" placeholder="e.g. 4">
@@ -223,6 +228,7 @@
             <button type="button" class="btn btn-white" id="bookAgainBtn">➕ Book another</button>
           </div>
           <p class="hint"><strong>Booking policy:</strong> Customer-requested cancellations after verified GCash payment are non-refundable, subject to applicable consumer rights. Contact the team for booking concerns. For venue cancellations, duplicate payments or payment without a secured slot, contact us to arrange an appropriate refund or an agreed reschedule. For unpaid counter bookings, message us to cancel; staff may release no-show slots 15 minutes after the booked start time if you have not contacted us.</p>
+          <p class="hint">Your booking is saved. Keep this reference even if the booking email is delayed or does not arrive. Check your Spam folder too.</p>
           <p class="hint" id="successNote">Tip: tap “Copy booking details”, then paste it in our Messenger chat so we can confirm you faster. Screenshot this page too! 📸</p>
         </div>
       </div>
