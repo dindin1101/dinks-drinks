@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Settings — Dinks &amp; Drinks</title>
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/png" href="../assets/img/logo.png">
+<link rel="stylesheet" href="../assets/css/styles.css">
+</head>
+<body class="admin-body">
+
+<aside class="admin-side">
+  <a class="admin-brand" href="dashboard.html">
+    <img src="../assets/img/logo.png" alt="" width="42" height="42">
+    <span><strong>Dinks <em>&amp;</em> Drinks</strong><small>Pickleball Zone</small></span>
+  </a>
+  <nav class="admin-nav">
+    <a href="dashboard.html" data-nav="dashboard">📋 <span>Bookings</span></a>
+    <a href="reports.html" data-nav="reports">📊 <span>Reports</span></a>
+    <a href="settings.html" data-nav="settings">⚙️ <span>Settings</span></a>
+    <a href="../index.html" target="_blank" rel="noopener">🌐 <span>Booking page</span></a>
+  </nav>
+  <div class="admin-side-foot">
+    <div class="admin-who">
+      <span class="admin-badge" id="adminMode">live</span>
+      <span id="adminUser" class="admin-email"></span>
+    </div>
+    <button class="btn btn-ghost btn-sm btn-block" id="logoutBtn">Log out</button>
+  </div>
+</aside>
+
+<header class="admin-topbar">
+  <button class="admin-burger" data-toggle-nav aria-label="Menu">☰</button>
+  <strong>Business Settings</strong>
+</header>
+
+<main class="admin-main">
+  <section id="setView" hidden>
+    <p class="hint">Changes here update the booking page immediately. <strong>Before going live, double-check the GCash number &amp; account name!</strong></p>
+
+    <div class="panel">
+      <h3 class="panel-title">💳 Payments</h3>
+      <div class="settings-grid">
+        <div class="field"><label for="setGcashNumber">📱 GCash number</label><input type="text" id="setGcashNumber"></div>
+        <div class="field"><label for="setGcashName">GCash account name</label><input type="text" id="setGcashName"></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3 class="panel-title">💵 Rates</h3>
+      <div class="settings-grid">
+        <div class="field"><label for="setCourtRate">🏟️ Court rate (₱ / court / hour)</label><input type="number" id="setCourtRate" min="0" step="10"></div>
+        <div class="field"><label for="setOpenRate">👥 Open play rate (₱ / pax)</label><input type="number" id="setOpenRate" min="0" step="10"></div>
+        <div class="field"><label for="setPaddleRate">🏓 Paddle rental (₱ / paddle)</label><input type="number" id="setPaddleRate" min="0" step="10"></div>
+        <div class="field"><label for="setPaddlePer">Paddle pricing</label>
+          <select id="setPaddlePer">
+            <option value="booking">Flat per paddle (whole booking)</option>
+            <option value="hour">Per paddle per hour</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3 class="panel-title">🕐 Courts &amp; sessions</h3>
+      <div class="settings-grid">
+        <div class="field"><label for="setCourts">Number of courts</label><input type="number" id="setCourts" min="1" max="12"></div>
+        <div class="field"><label for="setCapacity">Open play capacity (players/session)</label><input type="number" id="setCapacity" min="4" max="100"></div>
+        <div class="field"><label for="setCourtOpenHour">🏟️ Courts open (8 = 8AM)</label><input type="number" id="setCourtOpenHour" min="0" max="23"></div>
+        <div class="field"><label for="setCourtCloseHour">🏟️ Courts close (17 = 5PM)</label><input type="number" id="setCourtCloseHour" min="1" max="24"></div>
+        <div class="field"><label for="setOpenHour">👥 Open play starts (18 = 6PM)</label><input type="number" id="setOpenHour" min="0" max="23"></div>
+        <div class="field"><label for="setCloseHour">👥 Open play ends (22 = 10PM, 24 = 12MN)</label><input type="number" id="setCloseHour" min="1" max="24"></div>
+      </div>
+    </div>
+
+    <div class="admin-save-bar">
+      <button class="btn btn-lime btn-lg" id="saveSettingsBtn">💾 Save Settings</button>
+      <span id="settingsSaved" class="hint" hidden>✅ Saved!</span>
+    </div>
+
+    <p class="hint">Tip: GCash bookings start as <span class="status-pill st-pending">pending</span> — tap <strong>Confirm</strong> after you see the payment in your GCash (check the reference number). Counter bookings can be confirmed when the player arrives/pays. <strong>Cancel</strong> frees the slot instantly.</p>
+  </section>
+</main>
+
+<script src="../assets/js/config.js"></script>
+<script src="../assets/js/common.js"></script>
+<script src="../assets/js/admin-common.js"></script>
+<script src="../assets/js/admin-settings.js"></script>
+</body>
+</html>

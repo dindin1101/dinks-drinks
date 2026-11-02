@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Team Login — Dinks &amp; Drinks Pickleball Zone</title>
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/png" href="../assets/img/logo.png">
+<link rel="stylesheet" href="../assets/css/styles.css">
+</head>
+<body class="login-page">
+
+<main class="login-shell">
+  <div class="login-box">
+    <img src="../assets/img/logo.png" alt="Dinks &amp; Drinks logo" width="92" height="92">
+    <h1>Dinks <em>&amp;</em> Drinks</h1>
+    <p class="login-sub">Pickleball Zone · Team Login</p>
+
+    <!-- Real login (Supabase) -->
+    <form id="loginView" hidden>
+      <div class="field">
+        <label for="adminEmail">Email</label>
+        <input type="email" id="adminEmail" placeholder="owner@example.com" autocomplete="username" required>
+      </div>
+      <div class="field">
+        <label for="adminPass">Password</label>
+        <input type="password" id="adminPass" placeholder="••••••••" autocomplete="current-password" required>
+      </div>
+      <p id="loginError" class="form-error" hidden></p>
+      <button type="submit" class="btn btn-lime btn-block btn-lg" id="loginBtn">Log in</button>
+      <p class="hint center" style="margin-top:14px">Forgot your password? Ask the owner to reset it in Supabase → Authentication → Users.</p>
+    </form>
+
+    <!-- Demo PIN (only while Supabase is not connected) -->
+    <form id="pinView" hidden>
+      <p class="hint">🧪 <strong>Demo mode</strong> — Supabase is not connected yet. Demo PIN is <strong>1234</strong>.</p>
+      <div class="field">
+        <label for="adminPin">Admin PIN</label>
+        <input type="password" id="adminPin" inputmode="numeric" placeholder="••••" autocomplete="one-time-code">
+      </div>
+      <p id="pinError" class="form-error" hidden></p>
+      <button type="submit" class="btn btn-lime btn-block btn-lg" id="pinBtn">Enter Dashboard</button>
+    </form>
+
+    <p class="login-back"><a href="../index.html">← Back to booking page</a></p>
+  </div>
+</main>
+
+<script src="../assets/js/config.js"></script>
+<script src="../assets/js/common.js"></script>
+<script>
+(function () {
+  "use strict";
+  var D = window.DND, $ = function (id) { return document.getElementById(id); };
+  var DEMO_PIN = "1234"; // demo-mode only; real security = Supabase Auth + RLS
+  var NEXT = "dashboard.html";
+
+  function go() { location.replace(NEXT); }
+
+  function init() {
+    if (!D.HAS_SUPABASE) {
+      $("pinView").hidden = false;
+      $("pinView").addEventListener("submit", function (e) {
+        e.preventDefault();
+        if ($("adminPin").value === DEMO_PIN) {
+          sessionStorage.setItem(("dnd_admin_demo_v1"), "1");
+          go();
+        } else {
+          $("pinError").hidden = false;
+          $("pinError").textContent = "Wrong PIN. (Demo PIN: 1234)";
+        }
+      });
+      return;
+    }
+    D.getSupabase().then(function (sb) {
+      if (!sb) { $("pinView").hidden = false; return; }
+      sb.auth.getSession().then(function (res) {
+        if (res && res.data && res.data.session) { go(); return; }
+        $("loginView").hidden = false;
+        $("adminEmail").focus();
+      });
+      $("loginView").addEventListener("submit", function (e) {
+        e.preventDefault();
+        $("loginError").hidden = true;
+        $("loginBtn").disabled = true;
+        $("loginBtn").textContent = "⏳ Signing in…";
+        sb.auth.signInWithPassword({
+          email: $("adminEmail").value.trim(),
+          password: $("adminPass").value
+        }).then(function (res) {
+          $("loginBtn").disabled = false;
+          $("loginBtn").textContent = "Log in";
+          if (res.error) {
+            $("loginError").hidden = false;
+            $("loginError").textContent = "Login failed: " + res.error.message;
+          } else go();
+        });
+      });
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", init);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bookings Dashboard — Dinks &amp; Drinks</title>
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/png" href="../assets/img/logo.png">
+<link rel="stylesheet" href="../assets/css/styles.css">
+</head>
+<body class="admin-body">
+
+<aside class="admin-side">
+  <a class="admin-brand" href="dashboard.html">
+    <img src="../assets/img/logo.png" alt="" width="42" height="42">
+    <span><strong>Dinks <em>&amp;</em> Drinks</strong><small>Pickleball Zone</small></span>
+  </a>
+  <nav class="admin-nav">
+    <a href="dashboard.html" data-nav="dashboard">📋 <span>Bookings</span></a>
+    <a href="reports.html" data-nav="reports">📊 <span>Reports</span></a>
+    <a href="settings.html" data-nav="settings">⚙️ <span>Settings</span></a>
+    <a href="../index.html" target="_blank" rel="noopener">🌐 <span>Booking page</span></a>
+  </nav>
+  <div class="admin-side-foot">
+    <div class="admin-who">
+      <span class="admin-badge" id="adminMode">live</span>
+      <span id="adminUser" class="admin-email"></span>
+    </div>
+    <button class="btn btn-ghost btn-sm btn-block" id="logoutBtn">Log out</button>
+  </div>
+</aside>
+
+<header class="admin-topbar">
+  <button class="admin-burger" data-toggle-nav aria-label="Menu">☰</button>
+  <strong>Bookings</strong>
+  <button class="btn btn-dark btn-sm" id="refreshBtn">🔄 Refresh</button>
+</header>
+
+<main class="admin-main">
+  <section id="dashView" hidden>
+    <div class="stat-cards">
+      <div class="stat-card"><div class="s-num" id="statToday">0</div><div class="s-lab">Bookings today</div></div>
+      <div class="stat-card"><div class="s-num" id="statPending">0</div><div class="s-lab">⏳ Pending — needs checking</div></div>
+      <div class="stat-card"><div class="s-num" id="statUpcoming">0</div><div class="s-lab">Upcoming bookings</div></div>
+      <div class="stat-card"><div class="s-num" id="statRevenue">₱0</div><div class="s-lab">Confirmed revenue today</div></div>
+    </div>
+
+    <div class="filters">
+      <input type="date" id="fDate" aria-label="Filter by date">
+      <select id="fStatus" aria-label="Filter by status">
+        <option value="">All statuses</option>
+        <option value="pending">⏳ Pending</option>
+        <option value="confirmed">✅ Confirmed</option>
+        <option value="cancelled">❌ Cancelled</option>
+      </select>
+      <select id="fType" aria-label="Filter by type">
+        <option value="">All types</option>
+        <option value="court">🏟️ Court Rental</option>
+        <option value="openplay">👥 Open Play</option>
+      </select>
+      <input type="text" id="fSearch" placeholder="🔎 Search name / mobile / ref…">
+      <button class="btn btn-dark" id="clearFilters" style="flex:0 0 auto">Clear</button>
+    </div>
+
+    <div id="bkList" class="bk-list"></div>
+    <p id="bkEmpty" class="hint center" hidden>No bookings match your filters yet.</p>
+  </section>
+</main>
+
+<script src="../assets/js/config.js"></script>
+<script src="../assets/js/common.js"></script>
+<script src="../assets/js/admin-common.js"></script>
+<script src="../assets/js/admin-bookings.js"></script>
+</body>
+</html>
