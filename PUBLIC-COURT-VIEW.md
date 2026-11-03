@@ -40,3 +40,14 @@ Local PGlite regression tests cover SQL/schema, anonymous RPC permissions, priva
 columns excluded, pending/confirmed/cancelled visibility, historical date bounds,
 and nickname length constraint. Real Edge CAPTCHA, mobile layout and live Supabase
 checks still require deployment and owner testing; no real GCash payment required.
+
+## Simplified owner SQL step
+For the already-running site, use ONE file:
+`supabase/updates/20261103_existing_site_update.sql`.
+Paste the entire contents into a NEW SQL Editor query and Run. It combines
+migrations006–009 in one transaction, retains custom settings and existing
+bookings, and prevents accidentally finishing with an older email queue trigger.
+Do not use the old email setup query or re-run schema.sql instead. Applying this
+bundle alone does not deploy /courts or update Apps Script/Edge Functions.
+The bundle is regression-tested for repeat application and nickname-only public
+projection. Screenshot of Success must correspond to this query, not an old tab.

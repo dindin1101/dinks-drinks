@@ -12,6 +12,10 @@ const assert = require('node:assert/strict');
     create table storage.buckets(id text primary key,name text,public boolean,file_size_limit bigint,allowed_mime_types text[]);
     create table storage.objects(id uuid,bucket_id text);`);
   await db.exec(fs.readFileSync('supabase/schema.sql','utf8'));
+  // Owner copy/paste bundle is safe to apply/reapply on an existing installation.
+  const update=fs.readFileSync('supabase/updates/20261103_existing_site_update.sql','utf8');
+  await db.exec(update);
+  await db.exec(update);
   const date = (await db.query("select ((now() at time zone 'Asia/Manila')::date+1)::text as d")).rows[0].d;
   let seq = 0;
   function booking(extra = {}) {
