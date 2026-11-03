@@ -77,8 +77,8 @@
         '<div class="bk-main">' +
           '<span class="bk-ref">' + D.esc(b.booking_ref) + "</span> " +
           '<span class="status-pill st-' + D.esc(b.status) + '">' + D.esc(b.status) + "</span>" + dayTag + "<br>" +
-          (b.public_nickname ? "Public nickname: " + D.esc(b.public_nickname) + "<br>" : "") +
-          "<strong>" + D.esc(b.customer_name) + "</strong> · 📱 " + D.esc(b.mobile) + "<br>" +
+          (b.public_nickname ? "Public nickname: " + D.esc(D.properName(b.public_nickname)) + "<br>" : "") +
+          "<strong>" + D.esc(D.properName(b.customer_name)) + "</strong> · 📱 " + D.esc(b.mobile) + "<br>" +
           (b.booking_type === "court" ? "🏟️ " : "👥 ") + D.esc(slotText(b)) + "<br>" +
           "📅 " + D.friendlyDate(b.date) + "<br>" +
           "🏓 Paddles: " + (b.rent_paddle ? "Yes ×" + b.paddle_qty + " (" + D.peso(b.paddle_amount) + ")" : "No") + "<br>" +

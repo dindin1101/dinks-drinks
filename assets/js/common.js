@@ -24,15 +24,16 @@
     gcash_number: "0917 708 2805",          // from FB page contact — VERIFY this is your GCash number in Admin!
     gcash_name: "Dinks & Drinks Pickleball Zone", // VERIFY exact GCash account name in Admin!
     courts: 3,
-    court_open_hour: 8,                     // 8:00 AM — court rentals start
-    court_close_hour: 17,                   // last court game ends 5:00 PM
+    court_open_hour: 5,                     // 5:00 AM — court rentals start
+    court_close_hour: 24,                   // Court 1 ends at midnight
     open_hour: 18,                          // 6:00 PM — open play start
     close_hour: 22,                         // last game ends 10:00 PM
     court_rate: 250,                        // ₱ per court per hour
-    openplay_rate: 100,                     // ₱ per person per session
-    paddle_rate: 100,                       // ₱ per paddle
+    openplay_rate: 150,                     // ₱ per person per session
+    paddle_rate: 80,                       // ₱ per paddle
+    ball_rate: 50,                         // Purchase at counter; not included in booking total
     paddle_per: "booking",                  // "booking" = flat per paddle | "hour" = per paddle per hour
-    openplay_capacity: 24,                  // max players per open play session (all courts)
+    openplay_capacity: 24,                  // total players per Open Play session (Courts 2 and 3)
     openplay_sessions: [
       { id: "openplay", label: "Open Play", start_hour: 18, end_hour: 22 }
     ]
@@ -40,7 +41,7 @@
 
   /* ---------------- helpers ---------------- */
   function peso(n) {
-    return "₱" + Number(n || 0).toLocaleString("en-PH", { maximumFractionDigits: 0 });
+    return "₱" + Number(n || 0).toLocaleString("en-PH", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }
   function pad(n) { return String(n).padStart(2, "0"); }
   function isoDate(d) {
@@ -62,10 +63,12 @@
     if (h === 24) hh = 12;
     return hh + ap;
   }
+  function properName(value) {
+    return String(value || "").trim().replace(/\s+/g, " ").toLocaleLowerCase().replace(/(^|[\s'-])([^\s'-])/g, function (_, gap, letter) { return gap + letter.toLocaleUpperCase(); });
+  }
   function friendlyDate(s) {
-    return parseISODate(s).toLocaleDateString("en-PH", {
-      weekday: "long", month: "long", day: "numeric", year: "numeric"
-    });
+    var p = s.split("-");
+    return ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][Number(p[1])-1] + ". " + p[2] + ", " + p[0];
   }
   function uid() {
     return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
@@ -328,7 +331,7 @@
   window.DND = {
     HAS_SUPABASE: HAS_SUPABASE,
     DEFAULT_SETTINGS: DEFAULT_SETTINGS,
-    peso: peso, pad: pad, isoDate: isoDate, parseISODate: parseISODate,
+    properName: properName, peso: peso, pad: pad, isoDate: isoDate, parseISODate: parseISODate,
     hourLabel: hourLabel, hourShort: hourShort, friendlyDate: friendlyDate,
     uid: uid, makeRef: makeRef, esc: esc,
     getSupabase: getSupabase,

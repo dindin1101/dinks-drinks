@@ -44,7 +44,7 @@ function doPost(e) {
     Object.keys(values).forEach(function (name) {
       if (name.indexOf("MAIL_") === 0 && Number(values[name].split(":")[1]) < Date.now()-7*86400000) props.deleteProperty(name);
     });
-    function hour(n) { return (n % 12 || 12) + ":00 " + (n < 12 ? "AM" : "PM"); }
+    function hour(n) { return (n % 12 || 12) + ":00 " + (n < 12 || n === 24 ? "AM" : "PM"); }
     var schedule = hour(job.start_hour) + "–" + hour(job.end_hour);
     if (job.type === "court" && Array.isArray(job.slots)) {
       schedule = job.slots.map(function (s) { return "Court " + Number(s.court) + ": " + hour(Number(s.hour)) + "–" + hour(Number(s.hour)+1); }).join("\n");
@@ -57,7 +57,10 @@ function doPost(e) {
     };
     var message = job.email_message || defaults[job.status];
     var footer = job.email_footer || "Questions? Reply to this business email or message https://www.facebook.com/dinksNdrinks";
-    var body = statusText + "\n\n" + message + "\n\nReference: " + job.ref + "\nDate: " + job.date + " (Philippine time)\n" +
+    var dateParts = job.date.split("-");
+    var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    var displayDate = months[Number(dateParts[1])-1] + ". " + dateParts[2] + ", " + dateParts[0];
+    var body = statusText + "\n\n" + message + "\n\nReference: " + job.ref + "\nDate: " + displayDate + " (Philippine time)\n" +
       "Type: " + (job.type === "court" ? "Court rental" : "Open Play") + "\n" + schedule +
       "\nBooking total: PHP " + job.total.toFixed(2) + "\nPayment method: " + (job.payment === "gcash" ? "GCash" : "Over the Counter") +
       "\n\n" + (job.status === "pending" ? "This email is not proof of verified payment. Please wait for team confirmation.\n" : "") +
@@ -81,9 +84,6 @@ function doPost(e) {
       job.status === "pending" ? "This email is not proof of verified payment. Please wait for team confirmation." :
       "This confirms your booking schedule. Keep your reference handy; contact our team for any payment questions.";
     var chipColor = job.status === "cancelled" ? "#f5e7e4" : job.status === "confirmed" ? "#edf5dc" : "#fff3cd";
-    var dateParts = job.date.split("-");
-    var months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-    var displayDate = months[Number(dateParts[1])-1] + " " + Number(dateParts[2]) + ", " + dateParts[0];
     var htmlBody = '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>' +
       '<body style="margin:0;padding:0;background:#f7f5ee;color:#1f3a57;font-family:Arial,Helvetica,sans-serif;font-weight:400">' +
       '<div style="display:none;font-size:1px;line-height:1px;max-height:0;overflow:hidden">' + escapeHtml(statusText + " · " + job.ref) + '</div>' +

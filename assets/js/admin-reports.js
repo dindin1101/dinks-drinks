@@ -190,7 +190,7 @@
     var rows = [["Date", "Ref", "Customer", "Mobile", "Type", "Slot", "Paddles", "Payment", "GCash Ref", "Status", "Total (PHP)"]];
     all.filter(inRange).forEach(function (b) {
       rows.push([
-        b.date, b.booking_ref, b.customer_name, b.mobile,
+        b.date, b.booking_ref, D.properName(b.customer_name), b.mobile,
         b.booking_type === "court" ? "Court rental" : "Open play",
         b.booking_type === "court"
           ? (b.slots || []).map(function (s) { return "Court " + s.court + " " + D.hourShort(s.hour); }).join("; ")

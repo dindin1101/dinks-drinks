@@ -39,11 +39,13 @@
     if ($("chipCourtRate")) $("chipCourtRate").textContent = D.peso(s.court_rate) + "/hr";
     if ($("chipOpenRate")) $("chipOpenRate").textContent = D.peso(s.openplay_rate) + "/pax";
     if ($("chipPaddleRate")) $("chipPaddleRate").textContent = D.peso(s.paddle_rate) + (s.paddle_per === "hour" ? "/hr" : "/booking");
-    if ($("chipCourtHours")) $("chipCourtHours").textContent = D.hourLabel(s.court_open_hour) + " – " + D.hourLabel(s.court_close_hour);
-    if ($("chipOpenHours")) $("chipOpenHours").textContent = D.hourLabel(s.open_hour) + " – " + D.hourLabel(s.close_hour);
+    if ($("chipCourtHours")) $("chipCourtHours").textContent = "Court 1 · " + D.hourLabel(s.court_open_hour) + " – " + D.hourLabel(s.court_close_hour);
+    if ($("chipOpenHours")) $("chipOpenHours").textContent = "Courts 2 & 3 · " + D.hourLabel(s.open_hour) + " – " + D.hourLabel(s.close_hour);
     if ($("rateCourt")) $("rateCourt").textContent = D.peso(s.court_rate);
     if ($("rateOpen")) $("rateOpen").textContent = D.peso(s.openplay_rate);
     if ($("paddlePriceUnit")) $("paddlePriceUnit").textContent = s.paddle_per === "hour" ? " / paddle / hour" : " / paddle / booking";
+    if ($("rateBall")) $("rateBall").textContent = D.peso(s.ball_rate);
+    if ($("bookingBallRate")) $("bookingBallRate").textContent = D.peso(s.ball_rate);
     if ($("ratePaddle")) $("ratePaddle").textContent = D.peso(s.paddle_rate);
     if ($("typeCourtSub")) $("typeCourtSub").textContent = D.peso(s.court_rate) + " per court / hour";
     if ($("typeOpenSub")) $("typeOpenSub").textContent = D.peso(s.openplay_rate) + " per person / session";
@@ -149,7 +151,8 @@
       for (var cc = 1; cc <= s.courts; cc++) {
         var key = cc + "-" + h;
         var cls = "slot-btn", label = D.peso(s.court_rate), dis = "";
-        if (booked[key]) { cls += " is-booked"; label = "Booked"; dis = " disabled"; }
+        if ((cc === 2 || cc === 3) && h >= s.open_hour) { cls += " is-booked"; label = h < s.close_hour ? "Open Play" : "Closed"; dis = " disabled"; }
+        else if (booked[key]) { cls += " is-booked"; label = "Booked"; dis = " disabled"; }
         else if (isPastSlot(h)) { cls += " is-past"; label = "Past"; dis = " disabled"; }
         else if (state.selected[key]) { cls += " is-selected"; label = "✓ " + D.peso(s.court_rate); }
         html += '<button type="button" class="' + cls + '" data-key="' + key + '"' + dis + ">" + label + "</button>";
@@ -346,8 +349,10 @@
     catch (err) { return showError(err.message); }
     var s = state.settings;
     var t = computeTotals();
-    var name = $("custName").value.trim();
-    var nickname = $("publicNickname").value.trim();
+    var name = D.properName($("custName").value);
+    $("custName").value = name;
+    var nickname = D.properName($("publicNickname").value);
+    $("publicNickname").value = nickname;
     if (nickname.length < 2 || nickname.length > 30 || /[\x00-\x1f\x7f]/.test(nickname)) return showError("Enter a public nickname or team name (2–30 characters).");
     var mobile = $("custMobile").value.replace(/[\s\-()]/g, "");
     if (/^639\d{9}$/.test(mobile)) mobile = "+" + mobile;
@@ -504,6 +509,7 @@
       }
       buildDateChips();
 
+      ["custName", "publicNickname"].forEach(function (id) { $(id).addEventListener("blur", function () { $(id).value = D.properName($(id).value); }); });
       $("dateInput").addEventListener("change", function () {
         if (this.value) setDate(this.value);
       });

@@ -25,6 +25,7 @@
     $("setCourtRate").value = s.court_rate;
     $("setOpenRate").value = s.openplay_rate;
     $("setPaddleRate").value = s.paddle_rate;
+    $("setBallRate").value = s.ball_rate == null ? 50 : s.ball_rate;
     $("setPaddlePer").value = s.paddle_per;
     $("setCourts").value = s.courts;
     $("setCapacity").value = s.openplay_capacity;
@@ -36,8 +37,8 @@
   }
 
   function save() {
-    var rates = [Number($("setCourtRate").value), Number($("setOpenRate").value), Number($("setPaddleRate").value)];
-    if (["setCourtRate", "setOpenRate", "setPaddleRate"].some(function (id) { return $(id).value.trim() === ""; }) || rates.some(function (n) { return !isFinite(n) || n < 0 || n > 1000000 || n % 1 !== 0; }) || rates[0] <= 0 || rates[1] <= 0) {
+    var rates = [Number($("setCourtRate").value), Number($("setOpenRate").value), Number($("setPaddleRate").value), Number($("setBallRate").value)];
+    if (["setCourtRate", "setOpenRate", "setPaddleRate", "setBallRate"].some(function (id) { return $(id).value.trim() === ""; }) || rates.some(function (n) { return !isFinite(n) || n < 0 || n > 1000000 || n % 1 !== 0; }) || rates[0] <= 0 || rates[1] <= 0 || rates[3] <= 0) {
       ADMIN.toast("Enter rates in whole pesos. Court and Open Play rates must be greater than zero; paddle rental may be zero."); return;
     }
     var texts = {};
@@ -68,6 +69,8 @@
       court_rate: rates[0],
       openplay_rate: rates[1],
       paddle_rate: rates[2],
+      ball_rate: rates[3],
+      openplay_sessions: [{ id: "openplay", label: "Open Play", start_hour: openH, end_hour: closeH }],
       paddle_per: $("setPaddlePer").value,
       courts: Number($("setCourts").value) || 3,
       openplay_capacity: Number($("setCapacity").value) || 24,
