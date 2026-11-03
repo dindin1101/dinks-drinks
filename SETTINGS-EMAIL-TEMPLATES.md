@@ -75,3 +75,13 @@ Keep the same deployment URL, execution identity, access setting and Script Prop
 Do not paste keys into source. Styling itself needs no new keys or Edge redeploy;
 editable messages still require migration006. Email-client rendering should be
 checked in Gmail mobile/desktop and other supported clients after deployment.
+
+## Maximum two emails per booking
+Apply migration009 after migration006. Each booking reference can queue at most
+TWO email jobs: receipt and the first confirmed/cancelled decision. Returning to
+pending does not queue an email. Failed/uncertain jobs still consume their slot;
+retries reuse the same job and signed sender dedupe protects it. Never delete the
+outbox history to reset limits. If a confirmed booking is later cancelled after
+its two notices, staff must contact the customer directly (no third auto-email).
+Excess existing pending jobs are stopped; already-sent/in-flight mail cannot be
+recalled. This is a per-booking limit, not a lifetime limit per customer email.
