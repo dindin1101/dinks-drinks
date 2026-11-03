@@ -24,6 +24,9 @@
   function toast(msg) {
     var t = document.createElement("div");
     t.className = "toast";
+      t.setAttribute("role", "status");
+      t.setAttribute("aria-live", "polite");
+      document.querySelectorAll(".toast").forEach(function (previous) { previous.remove(); });
     t.textContent = msg;
     document.body.appendChild(t);
     setTimeout(function () { t.remove(); }, 2600);

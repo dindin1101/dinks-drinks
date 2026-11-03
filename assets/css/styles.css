@@ -212,7 +212,7 @@ input:focus,textarea:focus,select:focus{outline:3px solid rgba(31,58,87,.28);bor
 .st-cancelled{background:#F6D5D3;color:#8F1D18}
 .settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 @media(max-width:640px){.settings-grid{grid-template-columns:1fr}}
-.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--navy-dark);color:#fff;padding:12px 20px;border-radius:999px;font-weight:500;box-shadow:0 12px 30px rgba(0,0,0,.35);z-index:99;max-width:92vw;text-align:center}
+.toast{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);background:var(--navy-dark);color:#fff;padding:16px 24px;border-radius:16px;font-weight:400;box-shadow:0 12px 30px rgba(0,0,0,.35);z-index:99;width:max-content;max-width:min(440px,92vw);overflow-wrap:anywhere;text-align:center;pointer-events:none}
 
 /* ============================================================
    ADMIN AREA — login, sidebar shell, dashboard, reports
