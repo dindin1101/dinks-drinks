@@ -22,9 +22,10 @@ private. Dates display as Nov. 03, 2026; stored booking dates stay YYYY-MM-DD, n
 conversions. Native browser date-picker appearance remains browser/locale-dependent.
 Money display includes two decimals. Midnight is correctly shown as 12AM in emails.
 
-CAPTCHA: existing simplest Google v2 checkbox is retained. No new CAPTCHA vendor,
-new keys or weaker math challenge is implemented without owner selection. Hidden
-honeypot and server-side Google verification remain active; no bypass is introduced.
+CAPTCHA: owner subsequently explicitly requested removal. See NO-CAPTCHA-UPDATE.md.
+No CAPTCHA widget/token or Google verification call remains. Honeypot, database
+throttling, origin check, price validation, proof checks and atomic booking rules
+remain; bot resistance is weaker without CAPTCHA.
 
 ## Deployment order
 1. Supabase SQL Editor: apply ONLY migration
@@ -48,9 +49,9 @@ honeypot and server-side Google verification remain active; no bypass is introdu
 4. Mixed-case name/nickname becomes Proper Case. Date summaries/email show
    Nov. 03, 2026 format; public board reveals only confirmed chosen nicknames.
 5. Paddle1 adds80 in flat mode; ball is a counter-price notice and not included.
-   CAPTCHA still requires a fresh verified checkbox; verify email delivery and
+   No CAPTCHA is required; keep the honeypot blank and verify email delivery and
    max-two limit on a NEW reference, not repeated status toggles.
 
 Local tests cover SQL rates, exclusions, dawn/midnight, proper case, price tampering,
 Open Play limits, display formatting, settings, email HTML/signing, public privacy,
-notifications and mocked Edge CAPTCHA. Actual mobile and deployed E2E need review.
+notifications and mocked Edge honeypot/origin. Actual mobile and deployed E2E need review.

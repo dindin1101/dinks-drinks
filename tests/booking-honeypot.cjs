@@ -1,0 +1,11 @@
+const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
+const field={value:''},context={window:{},document:{getElementById:()=>field}};
+vm.runInNewContext(fs.readFileSync('assets/js/booking-security.js','utf8'),context);
+assert.equal(context.window.DND_SECURITY.read().website,'');
+assert.equal(context.window.DND_SECURITY.read().token,undefined);
+field.value='bot';assert.throws(()=>context.window.DND_SECURITY.read());
+context.window.DND_SECURITY.reset();
+assert(!fs.readFileSync('booking.html','utf8').includes('bookingCaptcha'));
+assert(!fs.readFileSync('assets/js/booking-security.js','utf8').includes('google.com'));
+assert(!fs.readFileSync('supabase/functions/create-booking/index.ts','utf8').includes('siteverify'));
+console.log('PASS: honeypot, no widget/token/Google script or verification call');
