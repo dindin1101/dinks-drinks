@@ -19,7 +19,16 @@
   window.dndCaptchaReady = function () {
     widget = window.grecaptcha.render("bookingCaptcha", {
       sitekey: config.RECAPTCHA_SITE_KEY,
-      size: "compact"
+      size: "compact",
+      "expired-callback": function () {
+        document.getElementById("captchaNotice").textContent = "Spam check expired. Tick the checkbox again before confirming.";
+      },
+      "error-callback": function () {
+        document.getElementById("captchaNotice").textContent = "Spam protection could not connect. Check your connection and reload this page.";
+      },
+      callback: function () {
+        document.getElementById("captchaNotice").textContent = "Spam check complete. You can now confirm your booking.";
+      }
     });
   };
   document.addEventListener("DOMContentLoaded", function () {

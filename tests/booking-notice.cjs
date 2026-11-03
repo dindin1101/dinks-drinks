@@ -1,0 +1,12 @@
+const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
+const s=fs.readFileSync('assets/js/app.js','utf8');
+const functionSource=s.slice(s.indexOf('  function showError(msg)'),s.indexOf('  function submitBooking()'));
+let opens=0,closed=0;
+const elements={formError:{scrollIntoView(){},setAttribute(){}}};
+const button={addEventListener:(event,fn)=>{button.click=fn;}};
+const document={body:{appendChild:n=>{elements[n.id]=n;elements.bookingNoticeMessage={};}},createElement:()=>({open:false,setAttribute(){},querySelector:()=>button,showModal(){this.open=true;opens++;},close(){this.open=false;closed++;}})};
+vm.runInNewContext(functionSource+';showError("Choose a court");showError("<img onerror=alert(1)>");',{document,$:id=>elements[id]});
+assert.equal(opens,1);assert.equal(elements.bookingNoticeMessage.textContent,'<img onerror=alert(1)>');
+button.click();assert.equal(closed,1);
+assert(s.includes('aria-describedby'));
+console.log('PASS: centered notice opens once, uses safe text, and closes via action');

@@ -314,8 +314,24 @@
     e.hidden = !msg;
     e.textContent = msg || "";
     if (msg) {
-      e.scrollIntoView({ behavior: "smooth", block: "center" });
-      toast("⚠️ Please check your booking details.");
+      var notice = $("bookingNotice");
+      if (!notice) {
+        notice = document.createElement("dialog");
+        notice.id = "bookingNotice";
+        notice.className = "booking-notice";
+        notice.setAttribute("aria-labelledby", "bookingNoticeTitle");
+        notice.setAttribute("aria-describedby", "bookingNoticeMessage");
+        notice.innerHTML = '<h2 id="bookingNoticeTitle">Please check your booking</h2><p id="bookingNoticeMessage"></p><button type="button" class="btn btn-dark" autofocus>Okay, review booking</button>';
+        document.body.appendChild(notice);
+        notice.querySelector("button").addEventListener("click", function () { notice.close(); });
+      }
+      $("bookingNoticeMessage").textContent = msg;
+      if (typeof notice.showModal === "function") {
+        if (!notice.open) notice.showModal();
+      } else {
+        e.scrollIntoView({ behavior: "smooth", block: "center" });
+        e.setAttribute("role", "alert");
+      }
     }
   }
 

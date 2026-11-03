@@ -22,7 +22,18 @@ Deno.serve(async (req: Request) => {
     });
     if (!verification.ok) return reply(503, "Spam verification unavailable");
     const result = await verification.json();
-    if (!result.success || result.hostname !== hostname) return reply(400, "Spam verification failed; complete the checkbox again");
+    if (!result.success) {
+      const codes: string[] = Array.isArray(result["error-codes"]) ? result["error-codes"] : [];
+      // Never log tokens or secrets. These codes help the owner diagnose configuration.
+      console.warn("Booking CAPTCHA rejected", { codes });
+      if (codes.includes("invalid-input-secret") || codes.includes("missing-input-secret")) return reply(503, "Spam protection configuration needs attention. Please contact our team.", "CAPTCHA_CONFIG");
+      if (codes.includes("timeout-or-duplicate")) return reply(400, "Spam check expired or was already used. Tick the checkbox again and retry.", "CAPTCHA_EXPIRED");
+      return reply(400, "Spam verification failed. Complete the checkbox again. If it repeats, contact our team.", "CAPTCHA_REJECTED");
+    }
+    if (result.hostname !== hostname) {
+      console.warn("Booking CAPTCHA hostname mismatch", { actual: result.hostname, expected: hostname });
+      return reply(400, "Spam protection is not configured for this website address. Please contact our team.", "CAPTCHA_DOMAIN_MISMATCH");
+    }
     if (!b || typeof b.customer_name !== "string" || !b.customer_name.trim() || b.customer_name.length > 120 || !/^(09\d{9}|\+639\d{9})$/.test(b.mobile) || !/^DND-[A-Z0-9]+$/.test(b.booking_ref) || !/^\d{4}-\d{2}-\d{2}$/.test(b.date) || !["court", "openplay"].includes(b.booking_type) || !["gcash", "counter"].includes(b.payment_method) || !Array.isArray(b.slots) || b.slots.length > 100 || (b.notes && (typeof b.notes !== "string" || b.notes.length > 2000))) return reply(400, "Invalid booking details");
     if (typeof b.customer_email !== "string" || b.customer_email.length > 254 || !/^[A-Za-z0-9._%+!\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}$/.test(b.customer_email)) return reply(400, "Valid booking email required");
     if (typeof b.public_nickname !== "string" || b.public_nickname.trim().length < 2 || b.public_nickname.trim().length > 30 || /[\x00-\x1f\x7f]/.test(b.public_nickname)) return reply(400, "Public nickname required (2–30 characters)");
