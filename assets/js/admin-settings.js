@@ -6,6 +6,7 @@
   var settings = null;
 
   function fillForm(s) {
+    $("setGcashQr").value = s.gcash_qr_url || "";
     $("setGcashNumber").value = s.gcash_number;
     $("setGcashName").value = s.gcash_name;
     $("setCourtRate").value = s.court_rate;
@@ -29,7 +30,10 @@
     if (!(openH >= 0 && closeH > openH && closeH <= 24)) {
       ADMIN.toast("⚠️ Check the open play hours (end must be after start)."); return;
     }
+    var qr = $("setGcashQr").value.trim();
+    if (qr && !/^https:\/\//i.test(qr)) { ADMIN.toast("Use an HTTPS QR image URL."); return; }
     var next = Object.assign({}, settings, {
+      gcash_qr_url: qr,
       gcash_number: $("setGcashNumber").value.trim(),
       gcash_name: $("setGcashName").value.trim(),
       court_rate: Number($("setCourtRate").value) || 0,

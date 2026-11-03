@@ -33,11 +33,17 @@
         return sb.auth.getSession().then(function (res) {
           var sess = res && res.data && res.data.session;
           if (!sess) { location.replace(ADMIN.loginUrl()); return; }
-          // Live updates when the owner signs out in another tab.
-          sb.auth.onAuthStateChange(function (evt) {
-            if (evt === "SIGNED_OUT") location.replace(ADMIN.loginUrl());
+          return sb.rpc("is_dnd_admin").then(function (access) {
+            if (access.error || access.data !== true) {
+              return sb.auth.signOut().then(function () {
+                location.replace(ADMIN.loginUrl() + "?access=denied");
+              });
+            }
+            sb.auth.onAuthStateChange(function (evt) {
+              if (evt === "SIGNED_OUT") location.replace(ADMIN.loginUrl());
+            });
+            cb({ mode: "supabase", sb: sb, email: sess.user && sess.user.email });
           });
-          cb({ mode: "supabase", sb: sb, email: sess.user && sess.user.email });
         });
       });
     },

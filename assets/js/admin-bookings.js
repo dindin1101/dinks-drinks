@@ -99,6 +99,19 @@
       if (b.status !== "cancelled") addBtn("❌ Cancel", "btn-dark", function () {
         if (window.confirm("Cancel booking " + b.booking_ref + "? This frees the slot.")) setStatus(b.id, "cancelled");
       });
+      if (b.payment_proof_path) addBtn("🧾 View receipt", "btn-dark", function () {
+        D.getSupabase().then(function (sb) {
+          if (!sb) throw new Error("Receipt unavailable in demo mode.");
+          return sb.storage.from("payment-proofs").createSignedUrl(b.payment_proof_path, 60);
+        }).then(function (res) {
+          if (res.error || !res.data) throw new Error("Could not open receipt.");
+          // Use a normal link rather than a delayed popup (often blocked on phones).
+          var link = document.createElement("a");
+          link.href = res.data.signedUrl; link.target = "_blank"; link.rel = "noopener noreferrer";
+          link.textContent = "Open receipt (link expires in 60 seconds)";
+          act.appendChild(link);
+        }).catch(function () { ADMIN.toast("Could not load receipt. Please check your login."); });
+      });
       box.appendChild(card);
     });
     renderStats();
@@ -148,6 +161,14 @@
       });
       $("refreshBtn").addEventListener("click", function () {
         load().then(function () { ADMIN.toast("🔄 Bookings refreshed."); });
+      });
+      $("retryEmails").addEventListener("click", function () {
+        var btn = this;
+        if (!user.sb) return ADMIN.toast("Email sending is disabled in demo mode.");
+        btn.disabled = true;
+        user.sb.functions.invoke("send-booking-emails").then(function (res) {
+          ADMIN.toast(res.error ? "Could not process queue. Check email setup." : "Queue check finished; this does not guarantee inbox delivery.");
+        }).catch(function () { ADMIN.toast("Could not connect to email service."); }).finally(function () { btn.disabled = false; });
       });
       load();
     });

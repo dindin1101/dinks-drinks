@@ -299,3 +299,19 @@ body.nav-open .admin-side{transform:none}
 .rep-table tr.rep-empty td{color:#9AA7B4}
 .rep-table tfoot th{background:var(--navy);color:#fff;font-weight:800;border:none}
 @media(max-width:520px){.rep-table{min-width:640px;font-size:.82rem}}
+
+/* Keep the bot trap out of the visual and keyboard flow. */
+.booking-trap { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+
+/* Clear side-by-side court and open-play options, including small phones. */
+.hero-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:24px}
+.hero-option{display:flex;flex-direction:column;gap:10px;padding:14px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.22);border-radius:18px;min-width:0}
+.hero-option .btn{white-space:normal;text-align:center;padding:12px 8px;font-size:clamp(.8rem,2.8vw,1rem);width:100%}
+.hero-option>strong,.hero-paddle strong{color:var(--yellow)}
+.hero-option>strong{font-size:1.35rem}
+.hero-option>span{font-size:.85rem}
+.option-label{color:#dce7ef}
+.hero-paddle{font-size:.9rem;margin-top:14px}
+.payment-qr{margin:16px 0;padding:12px;background:#fff;border-radius:12px}
+.payment-qr img{display:block;width:100%;max-width:220px;height:auto;margin:8px auto}
+.proof-preview{display:block;max-width:180px;max-height:220px;margin-top:10px;border-radius:8px}

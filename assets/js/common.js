@@ -89,8 +89,9 @@
           return mod.createClient(cfg.SUPABASE_URL, cfg.SUPABASE_ANON_KEY);
         })
         .catch(function (err) {
-          console.error("Supabase failed to load, falling back to demo mode.", err);
-          return null;
+          console.error("Supabase connection failed.", err);
+          _sbPromise = null;
+          throw new Error("Cannot connect to the booking service. Please try again; no booking has been saved.");
         });
     }
     return _sbPromise;
@@ -216,16 +217,32 @@
         .eq("date", dateStr)
         .neq("status", "cancelled")
         .then(function (res) {
-          if (res.error) { console.error(res.error); return []; }
+          if (res.error) throw new Error("Could not check availability. Please refresh before booking.");
           return res.data || [];
         });
     });
   }
 
-  function createBooking(booking) {
+  function createBooking(booking, protection) {
+    var fileInput = document.getElementById("gcashProof");
+    var file = fileInput && fileInput.files[0];
+    return new Promise(function (resolve, reject) {
+      if (booking.payment_method !== "gcash") return resolve(null);
+      if (!file || file.size > 1048576 || ["image/jpeg", "image/png", "image/webp"].indexOf(file.type) < 0) {
+        return reject(new Error("Upload a JPG, PNG or WebP payment receipt up to 1 MB."));
+      }
+      var reader = new FileReader();
+      reader.onerror = function () { reject(new Error("Could not read receipt. Please select it again.")); };
+      reader.onload = function () { resolve({ type: file.type, data: String(reader.result).split(",")[1] }); };
+      reader.readAsDataURL(file);
+    }).then(function (proof) { return saveBooking(booking, protection, proof); });
+  }
+
+  function saveBooking(booking, protection, proof) {
     return getSupabase().then(function (sb) {
       if (!sb) {
         var list = getDemoBookings();
+        // Demo receipts stay local and are not uploaded or persisted.
         list.push(booking);
         setDemoBookings(list);
         return { ok: true, booking: booking };
@@ -233,6 +250,7 @@
       var row = {
         booking_ref: booking.booking_ref,
         customer_name: booking.customer_name,
+        customer_email: booking.customer_email,
         mobile: booking.mobile,
         booking_type: booking.booking_type,
         date: booking.date,
@@ -251,8 +269,13 @@
         status: "pending",
         notes: booking.notes
       };
-      return sb.from("bookings").insert(row).then(function (res) {
-        return { ok: !res.error, error: res.error, booking: booking };
+      return sb.functions.invoke("create-booking", { body: { booking: row, protection: protection, proof: proof } }).then(function (res) {
+        if (res.error && res.error.context && typeof res.error.context.json === "function") {
+          return res.error.context.json().then(function (body) {
+            return { ok: false, error: { message: body.error, code: body.code } };
+          }).catch(function () { return { ok: false, error: res.error }; });
+        }
+        return { ok: !res.error && !(res.data && res.data.error), error: res.error || (res.data && res.data.error), booking: booking };
       });
     });
   }
@@ -287,7 +310,13 @@
         return { ok: true };
       }
       return sb.from("bookings").update({ status: status }).eq("id", id)
-        .then(function (res) { return { ok: !res.error, error: res.error }; });
+        .then(function (res) {
+          if (res.error) return { ok: false, error: res.error };
+          // Status is already saved. Email failure must not turn this into a failed update.
+          return sb.functions.invoke("send-booking-emails").then(function () {
+            return { ok: true };
+          }).catch(function () { return { ok: true }; });
+        });
     });
   }
 

@@ -15,7 +15,9 @@
     rentPaddle: false,
     paddleQty: 2,
     payment: "gcash",
-    lastBookingText: ""
+    lastBookingText: "",
+    attemptFingerprint: "",
+    attemptRef: ""
   };
 
   /* ---------- toast ---------- */
@@ -30,23 +32,28 @@
   /* ---------- static texts from settings ---------- */
   function applySettingsTexts() {
     var s = state.settings;
-    $("heroCourts").textContent = s.courts + " courts";
-    $("chipCourtRate").textContent = D.peso(s.court_rate) + "/hr";
-    $("chipOpenRate").textContent = D.peso(s.openplay_rate) + "/pax";
-    $("chipPaddleRate").textContent = D.peso(s.paddle_rate);
-    $("chipCourtHours").textContent = D.hourLabel(s.court_open_hour) + " – " + D.hourLabel(s.court_close_hour);
-    $("chipOpenHours").textContent = D.hourLabel(s.open_hour) + " – " + D.hourLabel(s.close_hour);
-    $("rateCourt").textContent = D.peso(s.court_rate);
-    $("rateOpen").textContent = D.peso(s.openplay_rate);
-    $("ratePaddle").textContent = D.peso(s.paddle_rate);
-    $("typeCourtSub").textContent = D.peso(s.court_rate) + " per court / hour";
-    $("typeOpenSub").textContent = D.peso(s.openplay_rate) + " per person / session";
-    $("paddleRateHint").textContent = "(" + D.peso(s.paddle_rate) + " each" +
+    if ($("heroCourts")) $("heroCourts").textContent = s.courts + " courts";
+    if ($("chipCourtRate")) $("chipCourtRate").textContent = D.peso(s.court_rate) + "/hr";
+    if ($("chipOpenRate")) $("chipOpenRate").textContent = D.peso(s.openplay_rate) + "/pax";
+    if ($("chipPaddleRate")) $("chipPaddleRate").textContent = D.peso(s.paddle_rate);
+    if ($("chipCourtHours")) $("chipCourtHours").textContent = D.hourLabel(s.court_open_hour) + " – " + D.hourLabel(s.court_close_hour);
+    if ($("chipOpenHours")) $("chipOpenHours").textContent = D.hourLabel(s.open_hour) + " – " + D.hourLabel(s.close_hour);
+    if ($("rateCourt")) $("rateCourt").textContent = D.peso(s.court_rate);
+    if ($("rateOpen")) $("rateOpen").textContent = D.peso(s.openplay_rate);
+    if ($("ratePaddle")) $("ratePaddle").textContent = D.peso(s.paddle_rate);
+    if ($("typeCourtSub")) $("typeCourtSub").textContent = D.peso(s.court_rate) + " per court / hour";
+    if ($("typeOpenSub")) $("typeOpenSub").textContent = D.peso(s.openplay_rate) + " per person / session";
+    if ($("paddleRateHint")) $("paddleRateHint").textContent = "(" + D.peso(s.paddle_rate) + " each" +
       (s.paddle_per === "hour" ? " / hour" : "") + ")";
-    $("gcashNumber").textContent = s.gcash_number;
-    $("gcashName").textContent = s.gcash_name;
-    $("fbBtn").href = s.facebook_url;
-    $("messengerBtn").href = s.messenger_url;
+    if ($("gcashNumber")) $("gcashNumber").textContent = s.gcash_number;
+    if ($("gcashName")) $("gcashName").textContent = s.gcash_name;
+    if ($("fbBtn")) $("fbBtn").href = s.facebook_url;
+    if ($("messengerBtn")) $("messengerBtn").href = s.messenger_url;
+    if ($("gcashQrImage") && /^https:\/\//i.test(s.gcash_qr_url || "")) {
+      $("gcashQrImage").src = s.gcash_qr_url;
+      $("gcashQrBox").hidden = false;
+      $("gcashQrImage").onerror = function () { $("gcashQrBox").hidden = true; };
+    }
     if (!D.HAS_SUPABASE) $("demoBanner").hidden = false;
   }
 
@@ -118,6 +125,10 @@
       renderSlotGrid();
       renderSessions();
       renderSummary();
+    }).catch(function (err) {
+      $("slotGrid").textContent = "Availability could not load. Please refresh before choosing a slot.";
+      state.selected = {};
+      showError(err.message);
     });
   }
 
@@ -308,13 +319,21 @@
   }
 
   function submitBooking() {
+    if ($("confirmBtn").disabled) return;
     showError("");
+    var protection;
+    try { protection = window.DND_SECURITY.read(); }
+    catch (err) { return showError(err.message); }
     var s = state.settings;
     var t = computeTotals();
     var name = $("custName").value.trim();
     var mobile = $("custMobile").value.replace(/[\s\-()]/g, "");
+    if (/^639\d{9}$/.test(mobile)) mobile = "+" + mobile;
+    var email = $("custEmail").value.trim().toLowerCase();
+    if (email.length > 254 || !/^[A-Za-z0-9._%+!\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}$/.test(email)) return showError("Please enter a valid email address for booking updates.");
     var notes = $("custNotes").value.trim();
     var gcashRef = $("gcashRef").value.trim();
+    if (state.payment === "gcash" && !$("gcashProof").files[0]) return showError("Please upload your GCash payment receipt.");
 
     if (state.type === "court" && t.hours === 0) return showError("Please select at least one court time slot (Step 3).");
     if (state.type === "openplay" && !currentSession()) return showError("Please pick an Open Play session (Step 3).");
@@ -344,16 +363,22 @@
           btn.disabled = false; btn.textContent = "✅ Confirm Booking";
           state.selected = {};
           renderSlotGrid(); renderSummary();
-          return showError("😢 One of your slots was just booked by someone else. Please pick another slot.");
+          return showError("One of your slots was just booked. Choose another slot. If you already paid, contact us with your GCash reference before paying again.");
         }
       }
 
       var slots = selectedSlotsArr();
       var sess = currentSession();
+      if (state.type === "openplay" && state.pax > s.openplay_capacity - openPlayTaken(sess)) {
+        btn.disabled = false; btn.textContent = "✅ Confirm Booking";
+        renderSessions(); renderSummary();
+        return showError("Open Play availability has changed. Reduce players or choose another date. If already paid, contact us before paying again.");
+      }
       var booking = {
         id: D.uid(),
         booking_ref: D.makeRef(),
         customer_name: name,
+        customer_email: email,
         mobile: mobile,
         booking_type: state.type,
         date: state.date,
@@ -374,18 +399,36 @@
         created_at: new Date().toISOString()
       };
 
-      return D.createBooking(booking).then(function (res) {
+      // Keep the same reference for an unchanged retry after a lost response.
+      var fingerprintData = Object.assign({}, booking);
+      delete fingerprintData.id;
+      delete fingerprintData.booking_ref;
+      delete fingerprintData.created_at;
+      var fingerprint = JSON.stringify(fingerprintData);
+      if (state.attemptFingerprint !== fingerprint) {
+        state.attemptFingerprint = fingerprint;
+        state.attemptRef = booking.booking_ref;
+      }
+      booking.booking_ref = state.attemptRef;
+
+      return D.createBooking(booking, protection).then(function (res) {
+        window.DND_SECURITY.reset();
         btn.disabled = false; btn.textContent = "✅ Confirm Booking";
         if (!res.ok) {
           console.error(res.error);
-          return showError("Something went wrong saving your booking. Please try again or message us on Facebook.");
+          if (res.error && (res.error.code === "SLOT_UNAVAILABLE" || res.error.code === "OPENPLAY_FULL")) {
+            state.selected = {};
+            refreshAvailability();
+          }
+          return showError(res.error && res.error.message || "Could not confirm your booking. Contact us before retrying if you already paid.");
         }
         showSuccess(booking, t);
       });
     }).catch(function (err) {
       console.error(err);
+      window.DND_SECURITY.reset();
       btn.disabled = false; btn.textContent = "✅ Confirm Booking";
-      showError("Connection problem while saving. Please try again.");
+      showError(err.message || "Connection problem while saving. Please try again.");
     });
   }
 
@@ -432,6 +475,10 @@
         state.sessionId = settings.openplay_sessions[settings.openplay_sessions.length - 1].id;
       }
       applySettingsTexts();
+      if (!$("bookingApp")) return;
+      if (new URLSearchParams(window.location.search).get("type") === "openplay") {
+        state.type = "openplay";
+      }
       buildDateChips();
 
       $("dateInput").addEventListener("change", function () {
@@ -455,6 +502,21 @@
         var num = state.settings.gcash_number.replace(/\s/g, "");
         if (navigator.clipboard) navigator.clipboard.writeText(num).then(function () { toast("📋 GCash number copied!"); });
       });
+      $("gcashProof").addEventListener("change", function () {
+        $("proofPreview").hidden = true;
+        $("proofPreview").removeAttribute("src");
+        var file = this.files[0];
+        $("proofStatus").textContent = "";
+        if (!file) return;
+        if (file.size > 1048576 || ["image/jpeg", "image/png", "image/webp"].indexOf(file.type) < 0) {
+          $("proofStatus").textContent = "Please choose a JPG, PNG or WebP image up to 1 MB.";
+          this.value = ""; return;
+        }
+        $("proofStatus").textContent = file.name + " selected. Uploaded when you confirm your booking.";
+        var reader = new FileReader();
+        reader.onload = function () { $("proofPreview").src = reader.result; $("proofPreview").hidden = false; };
+        reader.readAsDataURL(file);
+      });
       $("confirmBtn").addEventListener("click", submitBooking);
       $("copyDetailsBtn").addEventListener("click", function () {
         if (navigator.clipboard && state.lastBookingText) {
@@ -465,11 +527,18 @@
         $("successView").hidden = true;
         $("bookingApp").hidden = false;
         state.selected = {};
+        state.attemptFingerprint = "";
+        state.attemptRef = "";
         $("gcashRef").value = "";
+        $("gcashProof").value = "";
+        $("proofPreview").hidden = true;
+        $("proofPreview").removeAttribute("src");
+        $("proofStatus").textContent = "";
         refreshAvailability();
         $("book").scrollIntoView({ behavior: "smooth" });
       });
 
+      setType(state.type);
       refreshAvailability();
     });
   }

@@ -25,7 +25,7 @@
       <a href="#rates">Rates</a>
       <a href="#how">How it works</a>
       <a class="btn btn-ghost" id="fbBtn" href="https://www.facebook.com/dinksNdrinks" target="_blank" rel="noopener">Facebook Page</a>
-      <a class="btn btn-lime" href="#book">Book Now</a>
+      <a class="btn btn-lime" href="/booking">Book Now</a>
     </nav>
   </div>
 </header>
@@ -42,17 +42,21 @@
         <p class="hero-kicker">📍 Brgy. Magsaysay, Naguilian, Isabela</p>
         <h1>Eat. Play.<br>Drink. 🥤</h1>
         <p class="hero-sub">Welcome to <strong>Dinks &amp; Drinks Pickleball Zone</strong> — courts, bar &amp; community! Book one of our <strong id="heroCourts">3 courts</strong> in under a minute: pick your slot, add paddle rentals, then pay via <strong>GCash</strong> or <strong>over the counter</strong>. Play. Sip. Repeat. 🎾</p>
-        <div class="hero-cta">
-          <a class="btn btn-lime btn-lg" href="#book">🏟️ Rent a Court</a>
-          <a class="btn btn-white btn-lg" href="#book" data-goto-type="openplay">👥 Join Open Play</a>
+        <div class="hero-options">
+          <div class="hero-option">
+            <a class="btn btn-lime btn-lg" href="/booking">🏟️ Rent a Court</a>
+            <span class="option-label">Court rental · per hour</span>
+            <strong id="chipCourtRate">₱250/hr</strong>
+            <span id="chipCourtHours">8:00 AM – 5:00 PM</span>
+          </div>
+          <div class="hero-option">
+            <a class="btn btn-white btn-lg" href="/booking?type=openplay">👥 Join Open Play</a>
+            <span class="option-label">Open play · per player</span>
+            <strong id="chipOpenRate">₱100/pax</strong>
+            <span id="chipOpenHours">6:00 PM – 10:00 PM</span>
+          </div>
         </div>
-        <div class="hero-chips">
-          <span class="chip">🏟️ Court Rental <strong id="chipCourtRate">₱250/hr</strong></span>
-          <span class="chip">👥 Open Play <strong id="chipOpenRate">₱100/pax</strong></span>
-          <span class="chip">🏓 Paddle Rental <strong id="chipPaddleRate">₱100</strong></span>
-          <span class="chip">🏟️ Courts <strong id="chipCourtHours">8:00 AM – 5:00 PM</strong></span>
-          <span class="chip">👥 Open Play <strong id="chipOpenHours">6:00 PM – 10:00 PM</strong></span>
-        </div>
+        <p class="hero-paddle">🏓 Optional paddle rental <strong id="chipPaddleRate">₱100</strong></p>
       </div>
       <figure class="hero-media">
         <img src="assets/img/cover-fb.jpg" alt="Dinks &amp; Drinks Pickleball Zone — courts and The Zone Bar">
@@ -74,7 +78,7 @@
             <li>Book 1 hour or stack multiple hours</li>
             <li>Perfect for barkada games &amp; practice</li>
           </ul>
-          <a href="#book" class="btn btn-dark btn-block" data-goto-type="court">Rent a Court</a>
+          <a href="/booking" class="btn btn-dark btn-block">Rent a Court</a>
         </article>
         <article class="rate-card featured">
           <span class="badge">Most fun 🎉</span>
@@ -86,7 +90,7 @@
             <li>Open play sessions from 6 PM</li>
             <li>Beginners welcome — just show up &amp; play</li>
           </ul>
-          <a href="#book" class="btn btn-lime btn-block" data-goto-type="openplay">Join Open Play</a>
+          <a href="/booking?type=openplay" class="btn btn-lime btn-block">Join Open Play</a>
         </article>
         <article class="rate-card">
           <div class="rate-icon">🏓</div>
@@ -97,7 +101,7 @@
             <li>Add paddles while booking in 1 tap</li>
             <li>Just bring your game face 😎</li>
           </ul>
-          <a href="#book" class="btn btn-dark btn-block">Book + Paddles</a>
+          <a href="/booking" class="btn btn-dark btn-block">Book + Paddles</a>
         </article>
       </div>
     </div>
@@ -114,186 +118,13 @@
         <div class="step"><span class="step-n">4</span><h3>Show up &amp; play</h3><p>Save your booking reference code and present it when you arrive. Dink responsibly! 🥤</p></div>
       </div>
       <div class="policy-note">
-        <strong>Please note:</strong> GCash bookings are confirmed once payment is verified. Over-the-counter reservations are held until 15 minutes past your start time.
+        <strong>Booking policy:</strong> GCash bookings require payment verification. Customer-requested cancellations after verified GCash payment are non-refundable, subject to applicable consumer rights. Contact the team for booking concerns. For venue cancellations, duplicate payments or payment without a secured slot, contact us to arrange an appropriate refund or an agreed reschedule. Unpaid counter bookings may be cancelled by messaging the team. If you have not arrived or contacted us within 15 minutes after your booked start time, staff may release the slot.
       </div>
     </div>
   </section>
 
   <!-- BOOKING -->
-  <section id="book" class="section">
-    <div class="wrap">
-      <h2 class="sec-title">Book your game 🎾</h2>
 
-      <div id="bookingApp" class="booking-layout">
-        <div class="booking-main">
-
-          <!-- STEP 1: type -->
-          <div class="panel">
-            <h3 class="panel-title"><span class="pstep">1</span> What do you want to book?</h3>
-            <div class="type-toggle" role="radiogroup" aria-label="Booking type">
-              <button type="button" class="type-btn is-active" id="typeCourt" data-type="court">
-                <span class="t-ico">🏟️</span>
-                <span class="t-main">Rent a Court</span>
-                <span class="t-sub" id="typeCourtSub">₱250 per court / hour</span>
-              </button>
-              <button type="button" class="type-btn" id="typeOpen" data-type="openplay">
-                <span class="t-ico">👥</span>
-                <span class="t-main">Open Play</span>
-                <span class="t-sub" id="typeOpenSub">₱100 per person / session</span>
-              </button>
-            </div>
-          </div>
-
-          <!-- STEP 2: date -->
-          <div class="panel">
-            <h3 class="panel-title"><span class="pstep">2</span> Pick a date</h3>
-            <div id="dateChips" class="date-chips"></div>
-            <div class="date-more">
-              <label for="dateInput">Or choose a later date:</label>
-              <input type="date" id="dateInput">
-            </div>
-            <p class="sel-date-label">Selected: <strong id="selDateLabel">—</strong></p>
-          </div>
-
-          <!-- STEP 3A: court slots -->
-          <div class="panel" id="courtPanel">
-            <h3 class="panel-title"><span class="pstep">3</span> Pick your court &amp; time</h3>
-            <p class="hint">Tap a green slot to select it. You can pick multiple hours — even on different courts.</p>
-            <div class="legend">
-              <span><i class="lg lg-free"></i> Available</span>
-              <span><i class="lg lg-sel"></i> Selected</span>
-              <span><i class="lg lg-booked"></i> Booked</span>
-              <span><i class="lg lg-past"></i> Past</span>
-            </div>
-            <div id="slotGrid" class="slot-grid" aria-live="polite"></div>
-            <p id="slotMsg" class="hint warn" hidden></p>
-          </div>
-
-          <!-- STEP 3B: open play -->
-          <div class="panel" id="openPanel" hidden>
-            <h3 class="panel-title"><span class="pstep">3</span> Pick a session &amp; players</h3>
-            <div id="sessionList" class="session-list"></div>
-            <div class="field-row">
-              <label for="paxInput">Number of players (pax)</label>
-              <div class="stepper">
-                <button type="button" class="step-btn" id="paxMinus" aria-label="Fewer players">−</button>
-                <input type="number" id="paxInput" min="1" max="24" value="2">
-                <button type="button" class="step-btn" id="paxPlus" aria-label="More players">+</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- STEP 4: paddles -->
-          <div class="panel">
-            <h3 class="panel-title"><span class="pstep">4</span> Rent paddle?</h3>
-            <div class="yn-toggle" role="radiogroup" aria-label="Rent paddle">
-              <button type="button" class="yn-btn" id="paddleYes">✅ Yes, rent paddle(s)</button>
-              <button type="button" class="yn-btn is-active" id="paddleNo">❌ No, I have my own</button>
-            </div>
-            <div class="field-row" id="paddleQtyRow" hidden>
-              <label for="paddleQty">How many paddles? <span class="hint-inline" id="paddleRateHint">(₱100 each)</span></label>
-              <div class="stepper">
-                <button type="button" class="step-btn" id="paddleMinus" aria-label="Fewer paddles">−</button>
-                <input type="number" id="paddleQty" min="1" max="20" value="2">
-                <button type="button" class="step-btn" id="paddlePlus" aria-label="More paddles">+</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- STEP 5: details -->
-          <div class="panel">
-            <h3 class="panel-title"><span class="pstep">5</span> Your details</h3>
-            <div class="field">
-              <label for="custName">Full name *</label>
-              <input type="text" id="custName" placeholder="e.g. Juan Dela Cruz" autocomplete="name">
-            </div>
-            <div class="field">
-              <label for="custMobile">Mobile number *</label>
-              <input type="tel" id="custMobile" placeholder="e.g. 0917 123 4567" autocomplete="tel" inputmode="tel">
-            </div>
-            <div class="field" id="playersCourtRow">
-              <label for="courtPax">Number of players (optional)</label>
-              <input type="number" id="courtPax" min="1" max="20" placeholder="e.g. 4">
-            </div>
-            <div class="field">
-              <label for="custNotes">Notes (optional)</label>
-              <textarea id="custNotes" rows="2" placeholder="Anything we should know?"></textarea>
-            </div>
-          </div>
-
-          <!-- STEP 6: payment -->
-          <div class="panel">
-            <h3 class="panel-title"><span class="pstep">6</span> Payment method</h3>
-            <div class="type-toggle" role="radiogroup" aria-label="Payment method">
-              <button type="button" class="type-btn is-active" id="payGcash" data-pay="gcash">
-                <span class="t-ico">📱</span>
-                <span class="t-main">GCash</span>
-                <span class="t-sub">Send now to secure your slot</span>
-              </button>
-              <button type="button" class="type-btn" id="payCounter" data-pay="counter">
-                <span class="t-ico">🧾</span>
-                <span class="t-main">Over the Counter</span>
-                <span class="t-sub">Pay at the venue before your game</span>
-              </button>
-            </div>
-
-            <div id="gcashBox" class="gcash-box">
-              <p class="gcash-step">1️⃣ Open GCash and send <strong id="gcashAmount">₱0</strong> to:</p>
-              <div class="gcash-num-row">
-                <span class="gcash-num" id="gcashNumber">09XX XXX XXXX</span>
-                <button type="button" class="btn btn-dark btn-sm" id="copyGcashBtn">📋 Copy</button>
-              </div>
-              <p class="gcash-name">Account name: <strong id="gcashName">DINKS N DRINKS</strong></p>
-              <!-- Owner tip: if you have a GCash QR image, save it as assets/img/gcash-qr.png and uncomment the next line -->
-              <!-- <img class="gcash-qr" src="assets/img/gcash-qr.png" alt="GCash QR code"> -->
-              <p class="gcash-step">2️⃣ Enter the <strong>GCash Reference Number</strong> from your receipt:</p>
-              <div class="field">
-                <input type="text" id="gcashRef" placeholder="e.g. 1234 567 891011" inputmode="numeric">
-              </div>
-              <p class="hint">Your slot is reserved right away and confirmed once we verify your payment. Please keep your GCash receipt/screenshot.</p>
-            </div>
-
-            <div id="counterBox" class="counter-box" hidden>
-              <p>🧾 No payment now — just pay <strong id="counterAmount">₱0</strong> at the counter before your game.</p>
-              <p class="hint">⏰ Please arrive 15 minutes early. Unpaid reservations are released 15 minutes after the start time.</p>
-            </div>
-          </div>
-
-          <p id="formError" class="form-error" hidden></p>
-        </div>
-
-        <!-- SUMMARY -->
-        <aside class="summary-card" aria-label="Booking summary">
-          <h3>🧾 Booking Summary</h3>
-          <dl id="summaryBody" class="summary-body"></dl>
-          <div class="summary-total">
-            <span>Total</span>
-            <strong id="summaryTotal">₱0</strong>
-          </div>
-          <button type="button" class="btn btn-lime btn-block btn-lg" id="confirmBtn">✅ Confirm Booking</button>
-          <p class="hint center">Questions? Message us on <a href="https://m.me/dinksNdrinks" target="_blank" rel="noopener">Messenger</a> anytime.</p>
-        </aside>
-      </div>
-
-      <!-- SUCCESS -->
-      <div id="successView" class="success-view" hidden>
-        <div class="success-card">
-          <div class="success-ico">🎉</div>
-          <h3>Booking received!</h3>
-          <p class="hint" id="successStatus">Your slot is reserved. Show this reference code when you arrive:</p>
-          <p class="ref-code" id="successRef">DND-XXXXXX</p>
-          <dl id="successBody" class="summary-body"></dl>
-          <div class="success-actions">
-            <button type="button" class="btn btn-dark" id="copyDetailsBtn">📋 Copy booking details</button>
-            <a class="btn btn-lime" id="messengerBtn" href="https://m.me/dinksNdrinks" target="_blank" rel="noopener">💬 Send to our Messenger</a>
-            <button type="button" class="btn btn-white" id="bookAgainBtn">➕ Book another</button>
-          </div>
-          <p class="hint" id="successNote">Tip: tap “Copy booking details”, then paste it in our Messenger chat so we can confirm you faster. Screenshot this page too! 📸</p>
-        </div>
-      </div>
-
-    </div>
-  </section>
 </main>
 
 <footer class="site-footer">
