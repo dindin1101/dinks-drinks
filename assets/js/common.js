@@ -254,6 +254,7 @@
       var row = {
         booking_ref: booking.booking_ref,
         customer_name: booking.customer_name,
+        public_nickname: booking.public_nickname,
         customer_email: booking.customer_email,
         mobile: booking.mobile,
         booking_type: booking.booking_type,

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Court View — Dinks &amp; Drinks</title>
+<link rel="icon" href="assets/img/logo.png"><link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+<header class="site-header"><div class="wrap header-in">
+<a class="brand" href="/"><img src="assets/img/logo.png" alt="Dinks &amp; Drinks" width="42" height="42"><span>Dinks &amp; Drinks</span></a>
+<nav class="header-nav"><a class="btn btn-ghost btn-sm" href="/">Home</a><a class="btn btn-lime btn-sm" href="/booking">Book Now</a></nav>
+</div></header>
+<main class="wrap" style="padding-top:32px;padding-bottom:40px">
+<h1>Court View</h1>
+<p>Public court rental schedule · Philippine time</p>
+<p class="hint">“Scheduled now” is based on booking times, not attendance. Only chosen public nicknames are displayed. Pending bookings hide names. Open Play and walk-ins without a booking are not shown; check with staff for actual availability.</p>
+<div class="filters"><label for="boardDate">Schedule date</label><input type="date" id="boardDate"><button class="btn btn-dark" id="boardRefresh">Refresh</button></div>
+<p id="boardStatus" role="status" aria-live="polite">Loading schedule…</p>
+<div id="courtBoard" class="court-board"></div>
+<p class="hint">Refreshes every minute while this page is visible. Nicknames are not verified identities.</p>
+</main>
+<script src="assets/js/config.js"></script><script src="assets/js/common.js"></script><script src="assets/js/court-board.js"></script>
+</body></html>

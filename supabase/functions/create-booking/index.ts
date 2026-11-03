@@ -25,9 +25,11 @@ Deno.serve(async (req: Request) => {
     if (!result.success || result.hostname !== hostname) return reply(400, "Spam verification failed; complete the checkbox again");
     if (!b || typeof b.customer_name !== "string" || !b.customer_name.trim() || b.customer_name.length > 120 || !/^(09\d{9}|\+639\d{9})$/.test(b.mobile) || !/^DND-[A-Z0-9]+$/.test(b.booking_ref) || !/^\d{4}-\d{2}-\d{2}$/.test(b.date) || !["court", "openplay"].includes(b.booking_type) || !["gcash", "counter"].includes(b.payment_method) || !Array.isArray(b.slots) || b.slots.length > 100 || (b.notes && (typeof b.notes !== "string" || b.notes.length > 2000))) return reply(400, "Invalid booking details");
     if (typeof b.customer_email !== "string" || b.customer_email.length > 254 || !/^[A-Za-z0-9._%+!\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}$/.test(b.customer_email)) return reply(400, "Valid booking email required");
+    if (typeof b.public_nickname !== "string" || b.public_nickname.trim().length < 2 || b.public_nickname.trim().length > 30 || /[\x00-\x1f\x7f]/.test(b.public_nickname)) return reply(400, "Public nickname required (2–30 characters)");
+    b.public_nickname = b.public_nickname.trim();
     b.customer_email = b.customer_email.trim().toLowerCase();
     // Explicit allowlist: never accept an incoming status, id or timestamp.
-    const fields = ["booking_ref", "customer_email", "customer_name", "mobile", "booking_type", "date", "court_number", "start_hour", "end_hour", "slots", "pax", "rent_paddle", "paddle_qty", "court_amount", "paddle_amount", "total_amount", "payment_method", "gcash_ref", "notes"];
+    const fields = ["booking_ref", "customer_email", "customer_name", "public_nickname", "mobile", "booking_type", "date", "court_number", "start_hour", "end_hour", "slots", "pax", "rent_paddle", "paddle_qty", "court_amount", "paddle_amount", "total_amount", "payment_method", "gcash_ref", "notes"];
     const row: Record<string, unknown> = { status: "pending" };
     for (const field of fields) row[field] = b[field];
     const db = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);

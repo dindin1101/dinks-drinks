@@ -22,6 +22,7 @@
       </span>
     </a>
     <nav class="header-nav" aria-label="Main navigation">
+      <a class="home-link" href="/courts">Court View</a>
       <a class="home-link" href="/">Home</a>
       <a href="/#rates">Rates</a>
       <a href="/#how">How it works</a>
@@ -123,6 +124,11 @@
             <div class="field">
               <label for="custName">Full name *</label>
               <input type="text" id="custName" placeholder="e.g. Juan Dela Cruz" autocomplete="name">
+            </div>
+            <div class="field">
+              <label for="publicNickname">Public nickname / team name *</label>
+              <input type="text" id="publicNickname" minlength="2" maxlength="30" required autocomplete="off" aria-describedby="nicknameHint" placeholder="e.g. Team Smash">
+              <p id="nicknameHint" class="hint">For court rentals, this name will be visible to everyone on Court View after confirmation. Open Play names are not shown. Use a nickname, not your full name, phone or email. This does not create an account.</p>
             </div>
             <div class="field">
               <label for="custMobile">Mobile number *</label>

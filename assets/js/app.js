@@ -328,6 +328,8 @@
     var s = state.settings;
     var t = computeTotals();
     var name = $("custName").value.trim();
+    var nickname = $("publicNickname").value.trim();
+    if (nickname.length < 2 || nickname.length > 30 || /[\x00-\x1f\x7f]/.test(nickname)) return showError("Enter a public nickname or team name (2–30 characters).");
     var mobile = $("custMobile").value.replace(/[\s\-()]/g, "");
     if (/^639\d{9}$/.test(mobile)) mobile = "+" + mobile;
     var email = $("custEmail").value.trim().toLowerCase();
@@ -379,6 +381,7 @@
         id: D.uid(),
         booking_ref: D.makeRef(),
         customer_name: name,
+        public_nickname: nickname,
         customer_email: email,
         mobile: mobile,
         booking_type: state.type,

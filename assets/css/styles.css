@@ -324,3 +324,9 @@ body.nav-open .admin-side{transform:none}
 .email-preview{white-space:pre-wrap;overflow-wrap:anywhere;background:var(--cream);border:1px solid var(--line);border-radius:12px;padding:18px;font:400 .9rem/1.7 'Poppins',sans-serif;color:var(--ink);margin:12px 0 0}
 @media(max-width:760px){.header-nav>a.home-link{display:inline-flex;align-items:center;min-height:44px}.header-nav{gap:10px}}
 @media(max-width:420px){.header-in{gap:8px;flex-wrap:wrap}.header-nav{margin-left:auto}.header-nav .btn{padding:.5rem .65rem;font-size:.82rem}.header-nav .home-link{font-size:.82rem}.header-in .brand-text strong{font-size:.88rem}.header-in .brand-text small{font-size:.58rem}.header-in .brand img{width:36px;height:36px}}
+
+/* Public court board: names are explicit public aliases, never customer names. */
+.court-board{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:20px}
+.court-board .panel{min-width:0;overflow-wrap:anywhere}
+.court-current{border-left:3px solid var(--lime,#9CC93E);padding:8px;background:#f2f7e9}
+@media(max-width:760px){.court-board{grid-template-columns:1fr}}
