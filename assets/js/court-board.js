@@ -39,6 +39,12 @@
       image.alt = "";
       image.width = 400; image.height = 600;
       visual.appendChild(image);
+      if (focus) {
+        var overlay = element("span", "court-on-court-name");
+        overlay.appendChild(element("small", "", current ? "CURRENT SCHEDULE" : "NEXT SCHEDULE"));
+        overlay.appendChild(element("span", "", focus.booking_status === "confirmed" ? focus.label : "Awaiting confirmation"));
+        visual.appendChild(overlay);
+      }
       visual.appendChild(element("span", "court-number", "0" + court));
       visual.appendChild(element("span", "court-visual-caption", "Illustrated court · not live video"));
       summary.appendChild(visual);

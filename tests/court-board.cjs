@@ -22,6 +22,12 @@ assert(board.children[2].textContent.includes('Check with staff for availability
 function flatten(n){return [n,...n.children.flatMap(flatten)];}
 assert.equal(flatten(board).filter(n=>n.tag==='img').length,3);
 assert.equal(flatten(board).filter(n=>n.tag==='details').length,3);
+assert.equal(flatten(board).filter(n=>n.className==='court-on-court-name').length,2);
+assert(flatten(board).find(n=>n.className==='court-on-court-name').textContent.includes('<img onerror=alert(1)>'));
+for(const page of ['index.html','booking.html']) {
+ const html=fs.readFileSync(page,'utf8');
+ assert(html.indexOf('>Home</a>') < html.indexOf('>Court View</a>'));
+}
 assert.equal(flatten(board).filter(n=>n.tag==='img' && n.src!=='assets/img/court-top-view.svg').length,0);
 assert(!flatten(board).some(n=>n.tag==='script'));
 date.value='2026-11-04';context.render(rows,{courts:3});
