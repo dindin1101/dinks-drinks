@@ -21,7 +21,9 @@
         <small>Pickleball Zone</small>
       </span>
     </a>
-    <nav class="header-nav">
+    <nav class="header-nav" aria-label="Main navigation">
+      <a class="home-link" href="/courts">Court View</a>
+      <a class="home-link" href="/" aria-current="page">Home</a>
       <a href="#rates">Rates</a>
       <a href="#how">How it works</a>
       <a class="btn btn-ghost" id="fbBtn" href="https://www.facebook.com/dinksNdrinks" target="_blank" rel="noopener">Facebook Page</a>
@@ -95,7 +97,7 @@
         <article class="rate-card">
           <div class="rate-icon">🏓</div>
           <h3>Paddle Rental</h3>
-          <p class="rate-price"><span id="ratePaddle">₱100</span><small> / paddle</small></p>
+          <p class="rate-price"><span id="ratePaddle">₱100</span><small id="paddlePriceUnit"> / paddle / booking</small></p>
           <ul>
             <li>No paddle? No problem — rent on-site</li>
             <li>Add paddles while booking in 1 tap</li>

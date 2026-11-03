@@ -24,6 +24,9 @@
   function toast(msg) {
     var t = document.createElement("div");
     t.className = "toast";
+      t.setAttribute("role", "status");
+      t.setAttribute("aria-live", "polite");
+      document.querySelectorAll(".toast").forEach(function (previous) { previous.remove(); });
     t.textContent = msg;
     document.body.appendChild(t);
     setTimeout(function () { t.remove(); }, 2600);
@@ -35,11 +38,12 @@
     if ($("heroCourts")) $("heroCourts").textContent = s.courts + " courts";
     if ($("chipCourtRate")) $("chipCourtRate").textContent = D.peso(s.court_rate) + "/hr";
     if ($("chipOpenRate")) $("chipOpenRate").textContent = D.peso(s.openplay_rate) + "/pax";
-    if ($("chipPaddleRate")) $("chipPaddleRate").textContent = D.peso(s.paddle_rate);
+    if ($("chipPaddleRate")) $("chipPaddleRate").textContent = D.peso(s.paddle_rate) + (s.paddle_per === "hour" ? "/hr" : "/booking");
     if ($("chipCourtHours")) $("chipCourtHours").textContent = D.hourLabel(s.court_open_hour) + " – " + D.hourLabel(s.court_close_hour);
     if ($("chipOpenHours")) $("chipOpenHours").textContent = D.hourLabel(s.open_hour) + " – " + D.hourLabel(s.close_hour);
     if ($("rateCourt")) $("rateCourt").textContent = D.peso(s.court_rate);
     if ($("rateOpen")) $("rateOpen").textContent = D.peso(s.openplay_rate);
+    if ($("paddlePriceUnit")) $("paddlePriceUnit").textContent = s.paddle_per === "hour" ? " / paddle / hour" : " / paddle / booking";
     if ($("ratePaddle")) $("ratePaddle").textContent = D.peso(s.paddle_rate);
     if ($("typeCourtSub")) $("typeCourtSub").textContent = D.peso(s.court_rate) + " per court / hour";
     if ($("typeOpenSub")) $("typeOpenSub").textContent = D.peso(s.openplay_rate) + " per person / session";
@@ -313,8 +317,24 @@
     e.hidden = !msg;
     e.textContent = msg || "";
     if (msg) {
-      e.scrollIntoView({ behavior: "smooth", block: "center" });
-      toast("⚠️ Please check your booking details.");
+      var notice = $("bookingNotice");
+      if (!notice) {
+        notice = document.createElement("dialog");
+        notice.id = "bookingNotice";
+        notice.className = "booking-notice";
+        notice.setAttribute("aria-labelledby", "bookingNoticeTitle");
+        notice.setAttribute("aria-describedby", "bookingNoticeMessage");
+        notice.innerHTML = '<h2 id="bookingNoticeTitle">Please check your booking</h2><p id="bookingNoticeMessage"></p><button type="button" class="btn btn-dark" autofocus>Okay, review booking</button>';
+        document.body.appendChild(notice);
+        notice.querySelector("button").addEventListener("click", function () { notice.close(); });
+      }
+      $("bookingNoticeMessage").textContent = msg;
+      if (typeof notice.showModal === "function") {
+        if (!notice.open) notice.showModal();
+      } else {
+        e.scrollIntoView({ behavior: "smooth", block: "center" });
+        e.setAttribute("role", "alert");
+      }
     }
   }
 
@@ -327,6 +347,8 @@
     var s = state.settings;
     var t = computeTotals();
     var name = $("custName").value.trim();
+    var nickname = $("publicNickname").value.trim();
+    if (nickname.length < 2 || nickname.length > 30 || /[\x00-\x1f\x7f]/.test(nickname)) return showError("Enter a public nickname or team name (2–30 characters).");
     var mobile = $("custMobile").value.replace(/[\s\-()]/g, "");
     if (/^639\d{9}$/.test(mobile)) mobile = "+" + mobile;
     var email = $("custEmail").value.trim().toLowerCase();
@@ -378,6 +400,7 @@
         id: D.uid(),
         booking_ref: D.makeRef(),
         customer_name: name,
+        public_nickname: nickname,
         customer_email: email,
         mobile: mobile,
         booking_type: state.type,
