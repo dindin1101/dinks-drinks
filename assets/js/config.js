@@ -22,7 +22,7 @@
  * ============================================================
  */
 window.DND_CONFIG = {
-  SUPABASE_URL: "https://wryrseqayqvmorgpjqx.supabase.co",
+  SUPABASE_URL: "https://wryrseqayqvmgorgpjqx.supabase.co",
   RECAPTCHA_SITE_KEY: "6LcYng0uAAAAAFgb_IP69yhjsSAV0_1-w9fYbu39", /* Public reCAPTCHA v2 checkbox site key; never the secret. */
   SUPABASE_ANON_KEY: "sb_publishable_qgnoiu9BCJwG9QfmIdi5eQ_NRAlS-PU"
 };
