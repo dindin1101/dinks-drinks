@@ -51,3 +51,26 @@ Do not use the old email setup query or re-run schema.sql instead. Applying this
 bundle alone does not deploy /courts or update Apps Script/Edge Functions.
 The bundle is regression-tested for repeat application and nickname-only public
 projection. Screenshot of Success must correspond to this query, not an old tab.
+
+## Illustrated board refresh
+The public page now shows local SVG top-view court illustrations with net and
+pickleball markings, current/next rental summaries, pending/confirmed text badges,
+and native expandable daily schedules. The drawing is explicitly labeled an
+illustration, not an actual venue photo or live CCTV. Empty rental schedules do
+NOT assert actual availability: Open Play and unrecorded walk-ins remain excluded.
+Pending aliases are hidden in the UI as well as the existing RPC. All public text
+is inserted with textContent, not HTML. Uses the same RPC and existing settings;
+no new migration, secret, Edge Function or Apps Script change is needed.
+
+Five checks after website deployment:
+1. On /courts at desktop and ~390px, confirm Court 1/2/3 visuals and no overflow.
+2. Tap or keyboard-focus each court, press Enter/Space; day schedule expands.
+3. Confirmed current hour shows Scheduled now and nickname; next row shows next
+   slot. Pending slots show Awaiting confirmation, never the submitted nickname.
+4. Select future/past date: no Scheduled now label; empty schedule asks staff for
+   availability, not a guaranteed Available claim. Refresh failure clears cards.
+5. Confirm Home/Book Now work and recording remains disabled Coming soon.
+
+`node tests/court-board.cjs` covers visual card DOM, current/next summaries,
+private pending names, safe text handling, day switching and configured court count.
+Actual mobile/browser and deployed Supabase checks still require visual testing.

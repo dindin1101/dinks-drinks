@@ -341,3 +341,29 @@ body.nav-open .admin-side{transform:none}
 .booking-notice h2{font-size:1.15rem;font-weight:500;margin:0 0 12px}
 .booking-notice p{font-weight:400;margin-bottom:20px;overflow-wrap:anywhere}
 .booking-notice button{width:100%}
+
+/* Illustrated court schedule, not a live occupancy or CCTV feed. */
+.court-page-heading{max-width:680px;margin-bottom:22px}
+.court-page-heading h1{font-weight:500;font-size:clamp(1.8rem,4vw,2.6rem);line-height:1.2;margin:8px 0 12px}
+.court-eyebrow{font-size:.68rem;letter-spacing:.14em;color:var(--muted);margin:0 0 8px}
+.court-legend{display:flex;flex-wrap:wrap;gap:8px 20px;font-size:.78rem;margin-bottom:18px}
+.court-legend span:first-child{color:#234663}.court-legend span:nth-child(2){color:#826717}.court-legend span:last-child{color:#3b6c4c}
+.court-card{background:#fff;border:1px solid var(--line);border-radius:20px;overflow:hidden;min-width:0;box-shadow:0 8px 24px rgba(17,38,60,.06)}
+.court-card-head{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;padding:18px}
+.court-card-head h2{font-size:1.05rem;font-weight:500;margin:0}
+.court-badge{font-size:.65rem;background:#edf5e9;color:#3b6c4c;padding:6px 9px;border-radius:20px}
+.court-tone-confirmed .court-badge{background:#e8eff6;color:#234663}
+.court-tone-pending .court-badge{background:#fff3cd;color:#826717}
+.court-summary{display:block;cursor:pointer;list-style:none}.court-summary::-webkit-details-marker{display:none}
+.court-summary:focus-visible{outline:3px solid #9cc93e;outline-offset:-3px}
+.court-visual{position:relative;margin:0 16px;border-radius:14px;overflow:hidden;background:#192f39}
+.court-visual img{display:block;width:100%;height:310px;object-fit:contain;padding:10px}
+.court-number{position:absolute;left:16px;top:12px;color:#fff;font-size:1.4rem;opacity:.8;font-weight:400}
+.court-visual-caption{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);white-space:nowrap;color:#ecf3ed;background:rgba(17,38,60,.85);font-size:.58rem;padding:5px 10px;border-radius:20px}
+.court-card-info{padding:20px;overflow-wrap:anywhere}.court-alias{font-size:1.1rem;font-weight:500;margin:0 0 5px}.court-time{font-size:.85rem;color:var(--muted);margin:0}.court-next{font-size:.75rem;margin:12px 0 0;color:var(--muted)}
+.court-expand{display:block;margin-top:18px;font-size:.78rem;color:var(--navy);text-decoration:underline;text-underline-offset:4px}
+.court-details[open] .court-expand{color:#507a2c}
+.court-day-schedule{padding:0 20px 16px}.court-slot{display:grid;gap:4px;border-top:1px solid var(--line);padding:12px 0;font-size:.82rem;overflow-wrap:anywhere}.court-slot-time{font-size:.73rem;color:var(--muted)}.court-slot .hint{margin:0;font-size:.68rem}.court-slot.court-current{padding:12px;border-top:0;border-radius:8px;border-left:3px solid #9cc93e}
+@media(min-width:761px) and (max-width:1050px){.court-card-head{padding:14px}.court-visual img{height:260px}.court-card-info{padding:16px}}
+@media(max-width:760px){.court-visual img{height:300px}.court-card{max-width:480px;width:100%;margin-inline:auto}.court-legend{font-size:.7rem}}
+.court-tone-confirmed{border-top:3px solid #234663}.court-tone-pending{border-top:3px solid #c6a638}.court-tone-clear{border-top:3px solid #70a43e}
