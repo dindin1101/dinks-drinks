@@ -11,22 +11,13 @@
     $("loginBtn").textContent = "Continue with Google";
   }
   document.addEventListener("DOMContentLoaded", function () {
-    if (!D.HAS_SUPABASE) {
-      $("pinView").hidden = false;
-      $("pinView").addEventListener("submit", function (event) {
-        event.preventDefault();
-        if ($("adminPin").value === "1234") {
-          sessionStorage.setItem("dnd_admin_demo_v1", "1");
-          location.replace("/dinteams/dashboard");
-        } else {
-          $("pinError").hidden = false;
-          $("pinError").textContent = "Wrong demo PIN.";
-        }
-      });
-      return;
-    }
     $("loginView").hidden = false;
     $("loginBtn").disabled = true;
+    sessionStorage.removeItem("dnd_admin_demo_v1");
+    if (!D.HAS_SUPABASE) {
+      error("Admin login requires a live Supabase connection. Demo PIN login is no longer available.");
+      return;
+    }
     if (new URLSearchParams(location.search).get("access") === "denied") {
       error("This account is not approved, or admin access has not been configured. Contact the owner.");
     }
@@ -40,15 +31,23 @@
         $("loginError").hidden = true;
         $("loginBtn").disabled = true;
         $("loginBtn").textContent = "Opening Google…";
-        sb.auth.signInWithOAuth({
+        // Check reachability before leaving this page for the OAuth redirect.
+        var config = window.DND_CONFIG || {};
+        fetch(config.SUPABASE_URL.replace(/\/$/, "") + "/auth/v1/settings", {
+          headers: { apikey: config.SUPABASE_ANON_KEY },
+          signal: AbortSignal.timeout(10000)
+        }).then(function (response) {
+          if (!response.ok) throw new Error("Auth service unavailable");
+          return sb.auth.signInWithOAuth({
           provider: "google",
           options: {
             redirectTo: location.origin + "/dinteams/login",
             queryParams: { prompt: "select_account" }
           }
+          });
         }).then(function (res) {
           if (res.error) { error("Google sign-in could not start. Check the Google provider setup in Supabase."); ready(); }
-        }).catch(function () { error("Connection problem. Please try again."); ready(); });
+        }).catch(function () { error("Cannot reach the Supabase login service. Check the Project URL in Supabase and your internet connection, then try again."); ready(); });
       });
       return sb.auth.getSession().then(function (res) {
         if (res.error) throw res.error;

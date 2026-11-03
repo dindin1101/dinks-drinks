@@ -4,8 +4,6 @@
   var D = window.DND;
 
   var ADMIN = {
-    DEMO_KEY: "dnd_admin_demo_v1",
-
     toast: function (msg) {
       var t = document.createElement("div");
       t.className = "toast";
@@ -21,13 +19,9 @@
     /* Runs cb(user) only when signed in; otherwise bounces to the login page. */
     requireLogin: function (cb) {
       return D.getSupabase().then(function (sb) {
+        sessionStorage.removeItem("dnd_admin_demo_v1");
         if (!sb) {
-          // Demo mode — simple PIN session kept for this browser tab.
-          if (sessionStorage.getItem(ADMIN.DEMO_KEY) === "1") {
-            cb({ mode: "demo", email: "demo@dinksndrinks" });
-          } else {
-            location.replace(ADMIN.loginUrl());
-          }
+          location.replace(ADMIN.loginUrl());
           return;
         }
         return sb.auth.getSession().then(function (res) {
@@ -45,11 +39,14 @@
             cb({ mode: "supabase", sb: sb, email: sess.user && sess.user.email });
           });
         });
+      }).catch(function () {
+        // Fail closed: never show admin data after a connection/auth error.
+        location.replace(ADMIN.loginUrl());
       });
     },
 
     logout: function () {
-      sessionStorage.removeItem(ADMIN.DEMO_KEY);
+      sessionStorage.removeItem("dnd_admin_demo_v1");
       D.getSupabase().then(function (sb) {
         if (!sb) { location.replace(ADMIN.loginUrl()); return; }
         sb.auth.signOut().then(function () { location.replace(ADMIN.loginUrl()); });
