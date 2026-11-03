@@ -1,6 +1,6 @@
 # ✅ DO THIS NOW — 3 things left (≈10 minutes)
 
-Your screenshots show: GitHub account = **dindin1101**, Supabase project = **Dinks&Drinks (wryrseqayqvmorgpjqx)**, Vercel = ready to import.
+Your screenshots show: GitHub account = **dindin1101**, Supabase project = **Dinks&Drinks (wryrseqayqvmgorgpjqx)**, Vercel = ready to import.
 Follow **in this exact order**. Don't skip #1 — Vercel needs the repo to exist first.
 
 ---
@@ -57,7 +57,7 @@ You can do this **before** uploading (easier) or **after** (edit on GitHub — b
 
 ### Before uploading (recommended)
 1. Open **`assets/js/config.js`** in Notepad / VS Code / any text editor.
-2. The URL is already filled in: `https://wryrseqayqvmorgpjqx.supabase.co` ✅
+2. The URL is already filled in: `https://wryrseqayqvmgorgpjqx.supabase.co` ✅
 3. Paste your key here, between the quotes:
    ```js
    SUPABASE_ANON_KEY: "sb_publishable_xxxxxxxxxxxx"   // or "eyJhbGciOi..."

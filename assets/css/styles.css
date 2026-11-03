@@ -10,6 +10,7 @@
   --red:#D9534F; --radius:16px;
   --shadow:0 10px 30px rgba(17,38,60,.12);
 }
+[hidden]{display:none !important}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{margin:0;font-family:'Poppins',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;color:var(--ink);background:var(--cream);line-height:1.55}

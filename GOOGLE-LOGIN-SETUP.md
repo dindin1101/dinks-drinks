@@ -30,7 +30,7 @@ Sign out old owner sessions and sign in with Google after applying the migration
    for testing apps. Only request basic sign-in scopes (openid, email, profile).
 4. Under Clients/Credentials, create an OAuth client of type Web application.
 5. Add the authorized redirect URI copied from Supabase's Google provider panel:
-   `https://wryrseqayqvmorgpjqx.supabase.co/auth/v1/callback`
+   `https://wryrseqayqvmgorgpjqx.supabase.co/auth/v1/callback`
    If using a different Supabase project, copy that project's URI instead.
 6. Copy Client ID and Client Secret into Supabase's Google provider configuration.
    The secret goes ONLY in Supabase, never GitHub, config.js or chat.
