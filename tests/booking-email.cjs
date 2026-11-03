@@ -43,3 +43,17 @@ assert(lastMail.body.includes('This email is not proof of verified payment'));
 assert(!lastMail.body.includes('non-refundable'));
 assert.equal(call(envelope({...job,id:crypto.randomUUID(),email_message:'x'.repeat(1601)})).error,'invalid');
 console.log('PASS: editable plain-text messages, bounded length, fixed booking/payment details preserved');
+
+assert(lastMail.htmlBody.includes('Custom welcome &lt;text&gt; &amp; instructions.'));
+assert(!lastMail.htmlBody.includes('Custom welcome <text>'));
+assert(lastMail.htmlBody.includes('Philippine time (UTC+8)'));
+assert(lastMail.htmlBody.includes('PHP 250.00'));
+assert(!lastMail.htmlBody.includes('non-refundable'));
+for (const status of ['pending','confirmed','cancelled']) {
+  assert.equal(call(envelope({...job,id:crypto.randomUUID(),status})).ok,true);
+  assert(lastMail.htmlBody.includes('DND-TEST'));
+  assert(lastMail.body.includes('DND-TEST'));
+  if(status==='cancelled') assert(lastMail.htmlBody.includes('Cancellation does not mean a refund'));
+  if(status==='pending' && process.env.EMAIL_PREVIEW_PATH) fs.writeFileSync(process.env.EMAIL_PREVIEW_PATH,lastMail.htmlBody);
+}
+console.log('PASS: branded HTML for all statuses, plain-text fallback, escaped editable text, fixed safety notices');

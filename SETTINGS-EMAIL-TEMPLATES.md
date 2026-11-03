@@ -60,3 +60,18 @@ is unchanged by this feature. Final refund policy remains an owner/legal decisio
 Local tests: tests/admin-settings.cjs, tests/booking-email.cjs,
 tests/booking-safety.cjs (test-only PGlite dependency), tests/admin-google-only.cjs.
 Actual mobile layout, Supabase policies and Gmail delivery need live testing.
+
+## Branded HTML email update
+The sender now includes inline, table-based HTML plus the original plain-text
+fallback. Navy/cream/lime layout, status label, reference card, schedule and total,
+fixed payment clarification and contact button. No remote image/font fetch is
+required. Editable text remains escaped plain text, not injectable HTML.
+`integrations/google-apps-script/email-preview.html` is a synthetic pending sample.
+No previously sent email is modified by this update.
+
+To activate email styling: replace Code.gs with the current repository file, save,
+then Deploy → Manage deployments → Edit existing deployment → New version → Deploy.
+Keep the same deployment URL, execution identity, access setting and Script Properties.
+Do not paste keys into source. Styling itself needs no new keys or Edge redeploy;
+editable messages still require migration006. Email-client rendering should be
+checked in Gmail mobile/desktop and other supported clients after deployment.
