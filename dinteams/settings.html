@@ -19,7 +19,8 @@
     <a href="dashboard.html" data-nav="dashboard">📋 <span>Bookings</span></a>
     <a href="reports.html" data-nav="reports">📊 <span>Reports</span></a>
     <a href="settings.html" data-nav="settings">⚙️ <span>Settings</span></a>
-    <a href="../index.html" target="_blank" rel="noopener">🌐 <span>Booking page</span></a>
+    <a href="/">Home</a>
+    <a href="/booking">Booking page</a>
   </nav>
   <div class="admin-side-foot">
     <div class="admin-who">
@@ -37,7 +38,7 @@
 
 <main class="admin-main">
   <section id="setView" hidden>
-    <p class="hint">Changes here update the booking page immediately. <strong>Before going live, double-check the GCash number &amp; account name!</strong></p>
+    <p class="hint">Saved changes appear when customers reload the booking page. <strong>Before going live, double-check the GCash number &amp; account name!</strong></p>
 
     <div class="panel">
       <h3 class="panel-title">💳 Payments</h3>
@@ -49,11 +50,12 @@
     </div>
 
     <div class="panel">
-      <h3 class="panel-title">💵 Rates</h3>
+      <h3 class="panel-title">Rates</h3>
+      <p class="hint">New bookings use these rates after saving. Existing bookings keep their recorded amounts. Customers with an older total must refresh before submitting.</p>
       <div class="settings-grid">
-        <div class="field"><label for="setCourtRate">🏟️ Court rate (₱ / court / hour)</label><input type="number" id="setCourtRate" min="0" step="10"></div>
-        <div class="field"><label for="setOpenRate">👥 Open play rate (₱ / pax)</label><input type="number" id="setOpenRate" min="0" step="10"></div>
-        <div class="field"><label for="setPaddleRate">🏓 Paddle rental (₱ / paddle)</label><input type="number" id="setPaddleRate" min="0" step="10"></div>
+        <div class="field"><label for="setCourtRate">🏟️ Court rate (₱ / court / hour)</label><input type="number" id="setCourtRate" min="1" max="1000000" step="1"></div>
+        <div class="field"><label for="setOpenRate">👥 Open play rate (₱ / pax)</label><input type="number" id="setOpenRate" min="1" max="1000000" step="1"></div>
+        <div class="field"><label for="setPaddleRate">🏓 Paddle rental (₱ / paddle)</label><input type="number" id="setPaddleRate" min="0" max="1000000" step="1"></div>
         <div class="field"><label for="setPaddlePer">Paddle pricing</label>
           <select id="setPaddlePer">
             <option value="booking">Flat per paddle (whole booking)</option>
@@ -73,6 +75,18 @@
         <div class="field"><label for="setOpenHour">👥 Open play starts (18 = 6PM)</label><input type="number" id="setOpenHour" min="0" max="23"></div>
         <div class="field"><label for="setCloseHour">👥 Open play ends (22 = 10PM, 24 = 12MN)</label><input type="number" id="setCloseHour" min="1" max="24"></div>
       </div>
+    </div>
+
+    <div class="panel">
+      <h3 class="panel-title">Booking email messages</h3>
+      <p class="hint">Edit the plain-text message for each status. Subject, reference, date, schedule, total and payment status notices are added automatically. Do not include passwords, private receipt links or unconfirmed refund promises. Changes apply to newly queued emails, not emails already sent or queued.</p>
+      <div class="field"><label for="setEmailPending">Booking received — pending confirmation</label><textarea id="setEmailPending" rows="3" maxlength="1600"></textarea></div>
+      <div class="field"><label for="setEmailConfirmed">Booking confirmed</label><textarea id="setEmailConfirmed" rows="3" maxlength="1600"></textarea></div>
+      <div class="field"><label for="setEmailCancelled">Booking cancelled</label><textarea id="setEmailCancelled" rows="3" maxlength="1600"></textarea></div>
+      <div class="field"><label for="setEmailFooter">Contact / closing message (all emails)</label><textarea id="setEmailFooter" rows="3" maxlength="800"></textarea></div>
+      <div class="field"><label for="emailPreviewStatus">Preview status</label><select id="emailPreviewStatus"><option value="pending">Pending</option><option value="confirmed">Confirmed</option><option value="cancelled">Cancelled</option></select></div>
+      <p class="hint">Illustrative preview only, using one court-hour and one paddle at the rates above. This does not send an email or create a booking. Sender: Dinks &amp; Drinks &lt;dinksdrinks.bookings@gmail.com&gt;.</p>
+      <pre id="emailPreview" class="email-preview" aria-live="polite"></pre>
     </div>
 
     <div class="admin-save-bar">

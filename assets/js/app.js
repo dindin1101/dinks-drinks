@@ -35,11 +35,12 @@
     if ($("heroCourts")) $("heroCourts").textContent = s.courts + " courts";
     if ($("chipCourtRate")) $("chipCourtRate").textContent = D.peso(s.court_rate) + "/hr";
     if ($("chipOpenRate")) $("chipOpenRate").textContent = D.peso(s.openplay_rate) + "/pax";
-    if ($("chipPaddleRate")) $("chipPaddleRate").textContent = D.peso(s.paddle_rate);
+    if ($("chipPaddleRate")) $("chipPaddleRate").textContent = D.peso(s.paddle_rate) + (s.paddle_per === "hour" ? "/hr" : "/booking");
     if ($("chipCourtHours")) $("chipCourtHours").textContent = D.hourLabel(s.court_open_hour) + " – " + D.hourLabel(s.court_close_hour);
     if ($("chipOpenHours")) $("chipOpenHours").textContent = D.hourLabel(s.open_hour) + " – " + D.hourLabel(s.close_hour);
     if ($("rateCourt")) $("rateCourt").textContent = D.peso(s.court_rate);
     if ($("rateOpen")) $("rateOpen").textContent = D.peso(s.openplay_rate);
+    if ($("paddlePriceUnit")) $("paddlePriceUnit").textContent = s.paddle_per === "hour" ? " / paddle / hour" : " / paddle / booking";
     if ($("ratePaddle")) $("ratePaddle").textContent = D.peso(s.paddle_rate);
     if ($("typeCourtSub")) $("typeCourtSub").textContent = D.peso(s.court_rate) + " per court / hour";
     if ($("typeOpenSub")) $("typeOpenSub").textContent = D.peso(s.openplay_rate) + " per person / session";

@@ -28,6 +28,8 @@ function doPost(e) {
         !["court","openplay"].includes(job.type) || !["gcash","counter"].includes(job.payment) ||
         !/^\d{4}-\d{2}-\d{2}$/.test(job.date) || !Number.isFinite(job.total) ||
         !Number.isInteger(job.start_hour) || !Number.isInteger(job.end_hour)) return reply({ok:false,error:"invalid"});
+    if ((job.email_message != null && (typeof job.email_message !== "string" || job.email_message.length > 1600)) ||
+        (job.email_footer != null && (typeof job.email_footer !== "string" || job.email_footer.length > 800))) return reply({ok:false,error:"invalid"});
     lock = LockService.getScriptLock();
     if (!lock.tryLock(5000)) return reply({ok:false,error:"busy"});
     var key = "MAIL_" + job.id;
@@ -48,15 +50,19 @@ function doPost(e) {
       schedule = job.slots.map(function (s) { return "Court " + Number(s.court) + ": " + hour(Number(s.hour)) + "–" + hour(Number(s.hour)+1); }).join("\n");
     }
     var statusText = {pending:"Booking received — pending confirmation",confirmed:"Booking confirmed",cancelled:"Booking cancelled"}[job.status];
-    var body = statusText + "\n\nReference: " + job.ref + "\nDate: " + job.date + " (Philippine time)\n" +
+    var defaults = {
+      pending: "Thank you for booking with Dinks & Drinks. We have received your request and will review it shortly.",
+      confirmed: "Your booking is confirmed. Please arrive 15 minutes before your scheduled game and keep your reference handy.",
+      cancelled: "Your booking has been cancelled. Please contact our team if you have questions about your booking or payment."
+    };
+    var message = job.email_message || defaults[job.status];
+    var footer = job.email_footer || "Questions? Reply to this business email or message https://www.facebook.com/dinksNdrinks";
+    var body = statusText + "\n\n" + message + "\n\nReference: " + job.ref + "\nDate: " + job.date + " (Philippine time)\n" +
       "Type: " + (job.type === "court" ? "Court rental" : "Open Play") + "\n" + schedule +
       "\nBooking total: PHP " + job.total.toFixed(2) + "\nPayment method: " + (job.payment === "gcash" ? "GCash" : "Over the Counter") +
       "\n\n" + (job.status === "pending" ? "This email is not proof of verified payment. Please wait for team confirmation.\n" : "") +
       (job.status === "cancelled" ? "Cancellation does not mean a refund has been processed. Contact the team regarding payment.\n" : "") +
-      "\nCustomer-requested cancellations after verified GCash payment are non-refundable, subject to applicable consumer rights. " +
-      "For venue cancellations, duplicate payments or payment without a secured slot, contact the team for an appropriate refund or agreed reschedule.\n" +
-      "Unpaid counter bookings: message us to cancel. Staff may release a no-show slot 15 minutes after the booked start if you have not contacted us.\n\n" +
-      "Questions? Reply to this business email or message https://www.facebook.com/dinksNdrinks\n" +
+      "\n" + footer + "\n\n" +
       "If you did not make this booking, contact us. Do not send passwords or verification codes.";
     // Mark before sending. An uncertain send is NOT retried blindly.
     props.setProperty(key,"sending:" + Date.now());

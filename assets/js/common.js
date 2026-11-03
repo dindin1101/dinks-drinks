@@ -11,6 +11,10 @@
   var LS_SEEDED = "dnd_demo_seeded_v1";
 
   var DEFAULT_SETTINGS = {
+    email_pending_message: "Thank you for booking with Dinks & Drinks. We have received your request and will review it shortly.",
+    email_confirmed_message: "Your booking is confirmed. Please arrive 15 minutes before your scheduled game and keep your reference handy.",
+    email_cancelled_message: "Your booking has been cancelled. Please contact our team if you have questions about your booking or payment.",
+    email_footer: "Questions? Reply to this business email or message https://www.facebook.com/dinksNdrinks",
     business_name: "Dinks & Drinks",
     tagline: "Pickleball Zone",
     location: "Brgy. Magsaysay, Naguilian, Isabela",
