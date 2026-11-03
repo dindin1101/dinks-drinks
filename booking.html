@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dinks &amp; Drinks Pickleball Zone — Court Booking | Naguilian, Isabela</title>
-<meta name="description" content="Book a pickleball court or join open play at Dinks & Drinks Pickleball Zone, Brgy. Magsaysay, Naguilian, Isabela. ₱250 per court per hour. Paddle rental ₱100. Open play 6–10 PM daily. GCash or over-the-counter payment.">
+<meta name="description" content="Book a pickleball court or join open play at Dinks & Drinks Pickleball Zone, Brgy. Magsaysay, Naguilian, Isabela. ₱250 per court per hour. Paddle rental ₱80. Open play 6–10 PM daily. GCash or over-the-counter payment.">
 <link rel="icon" type="image/png" href="assets/img/logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -57,7 +57,7 @@
               <button type="button" class="type-btn" id="typeOpen" data-type="openplay">
                 <span class="t-ico">👥</span>
                 <span class="t-main">Open Play</span>
-                <span class="t-sub" id="typeOpenSub">₱100 per person / session</span>
+                <span class="t-sub" id="typeOpenSub">₱150.00 per person / session</span>
               </button>
             </div>
           </div>
@@ -76,7 +76,7 @@
           <!-- STEP 3A: court slots -->
           <div class="panel" id="courtPanel">
             <h3 class="panel-title"><span class="pstep">3</span> Pick your court &amp; time</h3>
-            <p class="hint">Tap a green slot to select it. You can pick multiple hours — even on different courts.</p>
+            <p class="hint">Court 1: 5 AM–midnight. Courts 2 &amp; 3: rental before 6 PM; Open Play 6–10 PM. Tap a green slot to select it. You can pick multiple hours — even on different courts.</p>
             <div class="legend">
               <span><i class="lg lg-free"></i> Available</span>
               <span><i class="lg lg-sel"></i> Selected</span>
@@ -109,7 +109,7 @@
               <button type="button" class="yn-btn is-active" id="paddleNo">❌ No, I have my own</button>
             </div>
             <div class="field-row" id="paddleQtyRow" hidden>
-              <label for="paddleQty">How many paddles? <span class="hint-inline" id="paddleRateHint">(₱100 each)</span></label>
+              <label for="paddleQty">How many paddles? <span class="hint-inline" id="paddleRateHint">(₱80.00 each)</span></label>
               <div class="stepper">
                 <button type="button" class="step-btn" id="paddleMinus" aria-label="Fewer paddles">−</button>
                 <input type="number" id="paddleQty" min="1" max="20" value="2">
@@ -118,6 +118,7 @@
             </div>
           </div>
 
+          <p class="hint">Buy a ball at the counter: <span id="bookingBallRate">₱50.00</span> each. Not included in the booking total.</p>
           <!-- STEP 5: details -->
           <div class="panel">
             <h3 class="panel-title"><span class="pstep">5</span> Your details</h3>

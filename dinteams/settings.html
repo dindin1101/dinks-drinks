@@ -57,6 +57,7 @@
         <div class="field"><label for="setCourtRate">🏟️ Court rate (₱ / court / hour)</label><input type="number" id="setCourtRate" min="1" max="1000000" step="1"></div>
         <div class="field"><label for="setOpenRate">👥 Open play rate (₱ / pax)</label><input type="number" id="setOpenRate" min="1" max="1000000" step="1"></div>
         <div class="field"><label for="setPaddleRate">🏓 Paddle rental (₱ / paddle)</label><input type="number" id="setPaddleRate" min="0" max="1000000" step="1"></div>
+        <div class="field"><label for="setBallRate">Ball purchase / each (counter only)</label><input type="number" id="setBallRate" min="1" max="1000000" step="1"></div>
         <div class="field"><label for="setPaddlePer">Paddle pricing</label>
           <select id="setPaddlePer">
             <option value="booking">Flat per paddle (whole booking)</option>
@@ -69,10 +70,10 @@
     <div class="panel">
       <h3 class="panel-title">🕐 Courts &amp; sessions</h3>
       <div class="settings-grid">
-        <div class="field"><label for="setCourts">Number of courts</label><input type="number" id="setCourts" min="1" max="12"></div>
+        <div class="field"><label for="setCourts">Number of courts (Open Play allocated to 2 &amp; 3)</label><input type="number" id="setCourts" min="1" max="12"></div>
         <div class="field"><label for="setCapacity">Open play capacity (players/session)</label><input type="number" id="setCapacity" min="4" max="100"></div>
-        <div class="field"><label for="setCourtOpenHour">🏟️ Courts open (8 = 8AM)</label><input type="number" id="setCourtOpenHour" min="0" max="23"></div>
-        <div class="field"><label for="setCourtCloseHour">🏟️ Courts close (17 = 5PM)</label><input type="number" id="setCourtCloseHour" min="1" max="24"></div>
+        <div class="field"><label for="setCourtOpenHour">🏟️ Court 1 opens (5 = 5AM)</label><input type="number" id="setCourtOpenHour" min="0" max="23"></div>
+        <div class="field"><label for="setCourtCloseHour">🏟️ Court 1 closes (24 = midnight)</label><input type="number" id="setCourtCloseHour" min="1" max="24"></div>
         <div class="field"><label for="setOpenHour">👥 Open play starts (18 = 6PM)</label><input type="number" id="setOpenHour" min="0" max="23"></div>
         <div class="field"><label for="setCloseHour">👥 Open play ends (22 = 10PM, 24 = 12MN)</label><input type="number" id="setCloseHour" min="1" max="24"></div>
       </div>

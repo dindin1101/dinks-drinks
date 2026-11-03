@@ -1,0 +1,11 @@
+const fs=require('node:fs'),vm=require('node:vm'),assert=require('node:assert/strict');
+const context={window:{DND_CONFIG:{}},console};
+vm.runInNewContext(fs.readFileSync('assets/js/common.js','utf8'),context);
+const D=context.window.DND;
+assert.equal(D.peso(250),'₱250.00');assert.equal(D.peso(80),'₱80.00');
+assert.equal(D.friendlyDate('2026-11-03'),'Nov. 03, 2026');
+assert.equal(D.properName("  mARY-jANE   o'NEIL "),"Mary-Jane O'Neil");
+assert.equal(D.DEFAULT_SETTINGS.court_open_hour,5);assert.equal(D.DEFAULT_SETTINGS.court_close_hour,24);
+assert.equal(D.DEFAULT_SETTINGS.openplay_rate,150);assert.equal(D.DEFAULT_SETTINGS.paddle_rate,80);assert.equal(D.DEFAULT_SETTINGS.ball_rate,50);
+assert.equal(D.hourLabel(24),'12:00 AM');
+console.log('PASS: requested rates, two-decimal prices, local Nov. 03, 2026 format, proper case and midnight label');

@@ -371,3 +371,5 @@ body.nav-open .admin-side{transform:none}
 .court-on-court-name{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:74%;max-width:260px;box-sizing:border-box;text-align:center;color:#fff;background:rgba(17,38,60,.94);border:1px solid rgba(255,255,255,.35);border-radius:10px;padding:12px 10px;overflow-wrap:anywhere;font-size:.95rem;line-height:1.45;pointer-events:none}
 .court-on-court-name small{display:block;font-size:.55rem;letter-spacing:.12em;color:#cfdfb3;margin-bottom:5px}
 .court-on-court-name>span{display:block;font-weight:400}
+
+.court-allocation{margin:0 18px 14px;padding:8px 10px;border-radius:8px;background:#edf5dc;color:#355731;font-size:.75rem;font-weight:400}

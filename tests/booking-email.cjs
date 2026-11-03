@@ -48,6 +48,8 @@ assert(lastMail.htmlBody.includes('Custom welcome &lt;text&gt; &amp; instruction
 assert(!lastMail.htmlBody.includes('Custom welcome <text>'));
 assert(lastMail.htmlBody.includes('Philippine time (UTC+8)'));
 assert(lastMail.htmlBody.includes('PHP 250.00'));
+assert(lastMail.htmlBody.includes('Dec. 01, 2026'));
+assert(lastMail.body.includes('Dec. 01, 2026'));
 assert(!lastMail.htmlBody.includes('non-refundable'));
 for (const status of ['pending','confirmed','cancelled']) {
   assert.equal(call(envelope({...job,id:crypto.randomUUID(),status})).ok,true);

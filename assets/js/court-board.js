@@ -14,6 +14,7 @@
     if (text != null) node.textContent = text;
     return node;
   }
+  function publicLabel(row) { return D.properName ? D.properName(row.label) : row.label; }
   function render(rows, settings) {
     var board = $("courtBoard"), now = manilaNow(), date = $("boardDate").value;
     board.textContent = "";
@@ -31,6 +32,10 @@
       header.appendChild(element("h2", "", "Court " + court));
       header.appendChild(element("span", "court-badge", status));
       card.appendChild(header);
+      if (court === 2 || court === 3) {
+        var allocation = element("p", "court-allocation", "Open Play · " + D.hourShort(settings.open_hour == null ? 18 : settings.open_hour) + "–" + D.hourShort(settings.close_hour == null ? 22 : settings.close_hour));
+        card.appendChild(allocation);
+      }
       var details = element("details", "court-details");
       var summary = element("summary", "court-summary");
       var visual = element("div", "court-visual");
@@ -42,7 +47,7 @@
       if (focus) {
         var overlay = element("span", "court-on-court-name");
         overlay.appendChild(element("small", "", current ? "CURRENT SCHEDULE" : "NEXT SCHEDULE"));
-        overlay.appendChild(element("span", "", focus.booking_status === "confirmed" ? focus.label : "Awaiting confirmation"));
+        overlay.appendChild(element("span", "", focus.booking_status === "confirmed" ? publicLabel(focus) : "Awaiting confirmation"));
         visual.appendChild(overlay);
       }
       visual.appendChild(element("span", "court-number", "0" + court));
@@ -50,9 +55,9 @@
       summary.appendChild(visual);
       var info = element("div", "court-card-info");
       info.appendChild(element("p", "court-eyebrow", current ? "CURRENT SCHEDULE" : upcoming ? "NEXT SCHEDULE" : "COURT RENTALS"));
-      info.appendChild(element("p", "court-alias", focus ? (focus.booking_status === "confirmed" ? focus.label : "Awaiting confirmation") : slots.length ? "View earlier rentals" : "No rental listed"));
+      info.appendChild(element("p", "court-alias", focus ? (focus.booking_status === "confirmed" ? publicLabel(focus) : "Awaiting confirmation") : slots.length ? "View earlier rentals" : "No rental listed"));
       info.appendChild(element("p", "court-time", focus ? D.hourShort(focus.hour) + "–" + D.hourShort(focus.hour + 1) : "Check with staff for availability"));
-      if (current && upcoming) info.appendChild(element("p", "court-next", "Next · " + D.hourShort(upcoming.hour) + " · " + (upcoming.booking_status === "confirmed" ? upcoming.label : "Awaiting confirmation")));
+      if (current && upcoming) info.appendChild(element("p", "court-next", "Next · " + D.hourShort(upcoming.hour) + " · " + (upcoming.booking_status === "confirmed" ? publicLabel(upcoming) : "Awaiting confirmation")));
       info.appendChild(element("span", "court-expand", "View day schedule (" + slots.length + " hourly slots)"));
       summary.appendChild(info); details.appendChild(summary);
       var list = element("div", "court-day-schedule");
@@ -61,7 +66,7 @@
         var isCurrent = date === now.date && r.hour === now.hour;
         var line = element("div", "court-slot" + (isCurrent ? " court-current" : ""));
         line.appendChild(element("span", "court-slot-time", D.hourShort(r.hour) + "–" + D.hourShort(r.hour + 1)));
-        line.appendChild(element("span", "", r.booking_status === "confirmed" ? r.label : "Awaiting confirmation"));
+        line.appendChild(element("span", "", r.booking_status === "confirmed" ? publicLabel(r) : "Awaiting confirmation"));
         line.appendChild(element("small", "hint", r.booking_status === "pending" ? "Pending confirmation" : isCurrent ? "Scheduled now · attendance not verified" : "Confirmed rental"));
         list.appendChild(line);
       });
